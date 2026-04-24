@@ -18,8 +18,18 @@ class ResumeRepositoryImpl implements ResumeRepository {
       final model = ResumeAnalysisModel.fromJson(json);
       return Right(model);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(_mapExceptionToFailure(e));
     }
+  }
+
+  Failure _mapExceptionToFailure(Object e) {
+    final errorStr = e.toString().toLowerCase();
+    if (errorStr.contains('quota') || errorStr.contains('429')) {
+      return ServerFailure('AI service is currently busy. Please try again in a few moments.');
+    } else if (errorStr.contains('network') || errorStr.contains('socket')) {
+      return ServerFailure('Network error. Please check your connection.');
+    }
+    return ServerFailure('Analysis failed: ${e.toString()}');
   }
 }
 
