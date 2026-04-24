@@ -3,27 +3,31 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class AnalyzeButton extends StatelessWidget {
+  final VoidCallback? onPressed;
   final bool isLoading;
-  final bool isResumeUploaded;
-  final VoidCallback onPressed;
+  final bool isActive;
 
   const AnalyzeButton({
     super.key,
-    required this.isLoading,
-    required this.isResumeUploaded,
     required this.onPressed,
+    required this.isLoading,
+    required this.isActive,
   });
 
   @override
   Widget build(BuildContext context) {
-    final active = isResumeUploaded && !isLoading;
+    final active = isActive && !isLoading;
     return SizedBox(
       width: double.infinity,
       height: 58,
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: active
-              ? const LinearGradient(colors: [AppColors.primary, AppColors.primaryDark], begin: Alignment.topLeft, end: Alignment.bottomRight)
+              ? const LinearGradient(
+                  colors: [AppColors.primary, AppColors.primaryDark],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
               : null,
           color: active ? null : AppColors.surfaceElevated,
           borderRadius: BorderRadius.circular(16),
@@ -32,7 +36,7 @@ class AnalyzeButton extends StatelessWidget {
               : null,
         ),
         child: ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
+          onPressed: active ? onPressed : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
             shadowColor: Colors.transparent,

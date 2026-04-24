@@ -35,6 +35,8 @@ class AppColors {
 class AppTheme {
   static ThemeData get dark {
     final base = ThemeData.dark(useMaterial3: true);
+    // final textTheme = GoogleFonts.nunitoTextTheme(base.textTheme);
+
     return base.copyWith(
       scaffoldBackgroundColor: AppColors.background,
       colorScheme: const ColorScheme.dark(
@@ -45,41 +47,58 @@ class AppTheme {
       ),
       textTheme: GoogleFonts.spaceGroteskTextTheme(base.textTheme).copyWith(
         displayLarge: GoogleFonts.spaceGrotesk(
-          color: AppColors.textPrimary, fontSize: 48,
-          fontWeight: FontWeight.w800, letterSpacing: -2,
+          color: AppColors.textPrimary,
+          fontSize: 48,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -2,
         ),
         displayMedium: GoogleFonts.spaceGrotesk(
-          color: AppColors.textPrimary, fontSize: 36,
-          fontWeight: FontWeight.w700, letterSpacing: -1,
+          color: AppColors.textPrimary,
+          fontSize: 36,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -1,
         ),
         headlineLarge: GoogleFonts.spaceGrotesk(
-          color: AppColors.textPrimary, fontSize: 26,
-          fontWeight: FontWeight.w700, letterSpacing: -0.5,
+          color: AppColors.textPrimary,
+          fontSize: 26,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.5,
         ),
         headlineMedium: GoogleFonts.spaceGrotesk(
-          color: AppColors.textPrimary, fontSize: 20,
+          color: AppColors.textPrimary,
+          fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
         titleLarge: GoogleFonts.spaceGrotesk(
-          color: AppColors.textPrimary, fontSize: 17,
+          color: AppColors.textPrimary,
+          fontSize: 17,
           fontWeight: FontWeight.w600,
         ),
         titleMedium: GoogleFonts.spaceGrotesk(
-          color: AppColors.textPrimary, fontSize: 15,
+          color: AppColors.textPrimary,
+          fontSize: 15,
           fontWeight: FontWeight.w500,
         ),
         bodyLarge: GoogleFonts.inter(
-          color: AppColors.textSecondary, fontSize: 16, height: 1.6,
+          color: AppColors.textSecondary,
+          fontSize: 16,
+          height: 1.6,
         ),
         bodyMedium: GoogleFonts.inter(
-          color: AppColors.textSecondary, fontSize: 14, height: 1.5,
+          color: AppColors.textSecondary,
+          fontSize: 14,
+          height: 1.5,
         ),
         bodySmall: GoogleFonts.inter(
-          color: AppColors.textMuted, fontSize: 12, height: 1.4,
+          color: AppColors.textPrimary,
+          fontSize: 12,
+          height: 1.4,
         ),
         labelLarge: GoogleFonts.spaceGrotesk(
-          color: AppColors.textPrimary, fontSize: 13,
-          fontWeight: FontWeight.w600, letterSpacing: 0.5,
+          color: AppColors.textPrimary,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
         ),
       ),
       cardTheme: CardThemeData(
@@ -95,9 +114,11 @@ class AppTheme {
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: GoogleFonts.spaceGrotesk(
-            fontSize: 15, fontWeight: FontWeight.w600,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
           ),
           elevation: 0,
         ),
@@ -108,12 +129,29 @@ class AppTheme {
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
         titleTextStyle: GoogleFonts.spaceGrotesk(
-          color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
         ),
       ),
       dividerTheme: const DividerThemeData(
-        color: AppColors.border, thickness: 1,
+        color: AppColors.border,
+        thickness: 1,
       ),
+    );
+  }
+
+  static TextStyle mono({
+    double? fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    double? letterSpacing,
+  }) {
+    return GoogleFonts.geologica(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color,
+      letterSpacing: letterSpacing,
     );
   }
 }

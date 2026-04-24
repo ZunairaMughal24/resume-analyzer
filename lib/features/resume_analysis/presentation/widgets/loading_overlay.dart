@@ -22,7 +22,8 @@ class LoadingOverlay extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 64, height: 64,
+                width: 64,
+                height: 64,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryDark]),
                   borderRadius: BorderRadius.circular(18),

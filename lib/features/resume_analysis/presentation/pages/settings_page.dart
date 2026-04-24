@@ -12,13 +12,15 @@ class SettingsPage extends StatelessWidget {
         title: const Text('Settings'),
         leading: IconButton(
           icon: Container(
-            width: 36, height: 36,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: AppColors.surfaceElevated,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: AppColors.border),
             ),
-            child: const Icon(Icons.arrow_back_ios_new_rounded, size: 15, color: AppColors.textPrimary),
+            child: const Icon(Icons.arrow_back_ios_new_rounded,
+                size: 15, color: AppColors.textPrimary),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -30,7 +32,10 @@ class SettingsPage extends StatelessWidget {
           children: [
             const _SectionHeader(title: 'About'),
             const SizedBox(height: 16),
-            const AboutCard().animate().fadeIn(delay: 150.ms).slideY(begin: 0.1),
+            const _AboutCard()
+                .animate()
+                .fadeIn(delay: 150.ms)
+                .slideY(begin: 0.1),
           ],
         ),
       ),
@@ -47,21 +52,22 @@ class _SectionHeader extends StatelessWidget {
     return Text(
       title.toUpperCase(),
       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-        color: AppColors.textMuted, letterSpacing: 1.2, fontSize: 11,
-      ),
+            color: AppColors.textMuted,
+            letterSpacing: 1.2,
+            fontSize: 11,
+          ),
     );
   }
 }
 
-class AboutCard extends StatelessWidget {
-  const AboutCard({super.key});
+class _AboutCard extends StatelessWidget {
+  const _AboutCard();
 
   @override
   Widget build(BuildContext context) {
     final items = [
       ('Version', '1.0.0'),
-      ('AI Model', 'Gemini Flash Latest'),
-      ('Architecture', 'Clean Architecture + BLoC'),
+      ('AI Model', 'Gemini 1.5 Flash (Firebase)'),
     ];
     return Container(
       decoration: BoxDecoration(
@@ -75,16 +81,27 @@ class AboutCard extends StatelessWidget {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(e.value.$1, style: Theme.of(context).textTheme.bodyMedium),
-                    Text(e.value.$2, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.primary)),
+                    Text(e.value.$1,
+                        style: Theme.of(context).textTheme.bodyMedium),
+                    Text(e.value.$2,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: AppColors.primary)),
                   ],
                 ),
               ),
-              if (!isLast) const Divider(height: 1, color: AppColors.border, indent: 20, endIndent: 20),
+              if (!isLast)
+                const Divider(
+                    height: 1,
+                    color: AppColors.border,
+                    indent: 20,
+                    endIndent: 20),
             ],
           );
         }).toList(),
