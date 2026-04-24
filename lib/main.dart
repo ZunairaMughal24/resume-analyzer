@@ -1,72 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:resume_analyzer/features/resume_analysis/data/datasources/ai_datasource.dart';
+import 'package:resume_analyzer/features/resume_analysis/data/repositories/resume_repository_impl.dart';
+import 'package:resume_analyzer/features/resume_analysis/domain/usecases/analyze_resume_usecase.dart';
+import 'package:resume_analyzer/features/resume_analysis/presentation/bloc/resume_bloc.dart';
+import 'package:resume_analyzer/features/resume_analysis/presentation/pages/home_page.dart';
 import 'core/theme/app_theme.dart';
-import 'core/di/injection.dart';
-import 'features/resume_analysis/presentation/bloc/resume_bloc.dart';
-import 'features/resume_analysis/presentation/pages/home_page.dart';
-import 'features/resume_analysis/presentation/pages/api_key_page.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initDependencies();
-  await dotenv.load(fileName: ".env");
-  
-  final prefs = sl<SharedPreferences>();
-  var apiKey = prefs.getString('api_key') ?? '';
-  
-  // Professional fallback: If SharedPreferences is empty, check .env
-  if (apiKey.isEmpty) {
-    apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-  }
-  
-  runApp(ResumeAnalyzerApp(initialApiKey: apiKey));
+  await dotenv.load(fileName: '.env');
+  runApp(const ResumeAnalyzerApp());
 }
 
-class ResumeAnalyzerApp extends StatefulWidget {
-  final String initialApiKey;
-  const ResumeAnalyzerApp({super.key, required this.initialApiKey});
-
-  @override
-  State<ResumeAnalyzerApp> createState() => _ResumeAnalyzerAppState();
-}
-
-class _ResumeAnalyzerAppState extends State<ResumeAnalyzerApp> {
-  late String _apiKey;
-
-  @override
-  void initState() {
-    super.initState();
-    _apiKey = widget.initialApiKey;
-  }
-
-  void _onKeySet() async {
-    final prefs = sl<SharedPreferences>();
-    setState(() => _apiKey = prefs.getString('api_key') ?? '');
-    
-    // In a production app, you might want to re-register the datasource with the new key,
-    // or better, pass the key with the request. For now, since sl is lazy singleton,
-    // we should ideally clear it or use a token provider if we update the key on the fly.
-    // For simplicity, we keep the existing structure but use DI.
-  }
+class ResumeAnalyzerApp extends StatelessWidget {
+  const ResumeAnalyzerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Resume Analyzer',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      home: _apiKey.isEmpty
-          ? ApiKeyPage(onKeySet: _onKeySet)
-          : _buildBlocProviders(),
-    );
-  }
+    final datasource = AiDatasource();
+    final repository = ResumeRepositoryImpl(datasource);
+    final useCase = AnalyzeResumeUseCase(repository);
 
-  Widget _buildBlocProviders() {
     return BlocProvider(
-      create: (_) => sl<ResumeBloc>(),
-      child: const HomePage(),
+      create: (_) => ResumeBloc(useCase),
+      child: MaterialApp(
+        title: 'ResumeAI',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.dark,
+        home: const HomePage(),
+      ),
     );
   }
 }
