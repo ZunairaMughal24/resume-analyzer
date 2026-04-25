@@ -5,16 +5,78 @@ class AppColors {
   // 🎨 MASTER THEME PALETTE
 
   // -- CURRENT THEME: EMERALD GREEN --
-  static const _themePrimary = Color(0xFF00DC82);
-  static const _themePrimaryDark = Color(0xFF00B36B);
-  static const _themeAccent = Color(0xFF34D399);
-  static const _themeGlow = Color.fromARGB(255, 200, 251, 60);
+  // static const _themePrimary = Color(0xFF00DC82);
+  // static const _themePrimaryDark = Color(0xFF00B36B);
+  // static const _themeAccent = Color(0xFF34D399);
+  // static const _themeGlow = Color.fromARGB(255, 200, 251, 60);
 
   // -- ALTERNATIVE THEME: OCEAN BLUE (Example, uncomment to switch) --
   // static const _themePrimary = Color(0xFF3B82F6);
   // static const _themePrimaryDark = Color(0xFF2563EB);
   // static const _themeAccent = Color(0xFF60A5FA);
   // static const _themeGlow = Color(0xFF93C5FD);
+
+  ///-- ALTERNATIVE THEME: SUNSET CORAL (Uncomment to switch) --
+  static const _themePrimary =
+      Color(0xFFE07A5F); // Warm Terracotta (Orangey-Brown)
+  static const _themePrimaryDark = Color(0xFFB85942); // Deep Rust / Brown
+  static const _themeAccent = Color(0xFFF4A261); // Sandy Orange Accent
+  static const _themeGlow = Color(0xFFFFD6BA); // Warm Peach Glow
+
+  // -- ALTERNATIVE THEME: ROYAL AMETHYST (Premium / Expensive Look) --
+  // static const _themePrimary = Color(0xFF8B5CF6); // Rich elegant Violet
+  // static const _themePrimaryDark = Color(0xFF5B21B6); // Deep premium Amethyst
+  // static const _themeAccent = Color(0xFFA78BFA); // Soft glowing Purple
+  // static const _themeGlow = Color(0xFFC4B5FD); // Ethereal Purple Glow
+
+  ///-- ALTERNATIVE THEME: MIDNIGHT GOLD (Executive / Fintech Vibe) --
+  // static const _themePrimary = Color(0xFFD4AF37); // Metallic Gold
+  // static const _themePrimaryDark = Color(0xFF996515); // Deep Antique Gold
+  // static const _themeAccent = Color(0xFFF3E5AB); // Vanilla / Light Gold
+  // static const _themeGlow = Color(0xFFFFD700); // Bright Gold Glow
+
+  ///-- ALTERNATIVE THEME: CYBER AQUA (Modern AI / Tech Startup) --
+  // static const _themePrimary = Color(0xFF00E5FF); // Electric Cyan
+  // static const _themePrimaryDark = Color(0xFF00B8D4); // Deep Aqua
+  // static const _themeAccent = Color(0xFF18FFFF); // Bright Neon Cyan
+  // static const _themeGlow = Color(0xFF84FFFF); // Soft Cyan Glow
+
+  ///-- ALTERNATIVE THEME: DEEP SAPPHIRE (High-end Automotive / Corporate) --
+  // static const _themePrimary = Color(0xFF0F52BA); // Sapphire Blue
+  // static const _themePrimaryDark = Color(0xFF082567); // Midnight Sapphire
+  // static const _themeAccent = Color(0xFFE5E4E2); // Platinum Accent
+  // static const _themeGlow = Color(0xFF8B9BB4); // Soft Steel Glow
+
+  ///-- ALTERNATIVE THEME: TITANIUM & NEON AMBER (Nothing OS / Hyper-Modern Tech) --
+  // static const _themePrimary = Color(0xFFFF4500); // Electric Orange/Amber
+  // static const _themePrimaryDark = Color(0xFFCC3700); // Deep Burnt Orange
+  // static const _themeAccent = Color(0xFFFF8C00); // Dark Orange Accent
+  // static const _themeGlow = Color(0xFFFFDAB9); // Soft Peach Glow
+
+  ///-- ALTERNATIVE THEME: DEEP JADE & CHAMPAGNE (Wealth Management / Banking) --
+  // static const _themePrimary = Color(0xFF00A86B); // Rich Jade Green
+  // static const _themePrimaryDark = Color(0xFF00754B); // Deep Forest Jade
+  // static const _themeAccent = Color(0xFFF7E7CE); // Soft Champagne Gold
+  // static const _themeGlow = Color(0xFFC1D5D0); // Ethereal Silver-Green Glow
+
+  ///-- ALTERNATIVE THEME: CHARCOAL & FROST BLUE (Luxury EV / Polestar UI) --
+  // static const _themePrimary = Color(0xFF8AB4F8); // Crisp Frost Blue
+  // static const _themePrimaryDark = Color(0xFF4285F4); // Deep Cobalt
+  // static const _themeAccent = Color(0xFFD2E3FC); // Icy White Accent
+  // static const _themeGlow = Color(0xFFE8F0FE); // Soft Frost Glow
+
+  // -- ALTERNATIVE THEME: MUTED SAGE & SAND (Calm / Organic Minimalist) --
+  // static const _themePrimary = Color(0xFF8A9A86); // Muted Sage Green
+  // static const _themePrimaryDark = Color(0xFF5E6D5A); // Deep Sage
+  // static const _themeAccent = Color(0xFFD4CBBB); // Soft Sand Beige
+  // static const _themeGlow = Color(0xFFE8E5E1); // Very Soft Organic Glow
+
+  // -- ALTERNATIVE THEME: DUSTY BLUE & WARM GREY (Corporate Clean / Subtle) --
+  // static const _themePrimary = Color(0xFF6C8EBF); // Dusty Corporate Blue
+  // static const _themePrimaryDark = Color(0xFF4A6B9C); // Deep Dusty Blue
+  // static const _themeAccent = Color(0xFFB0B7C6); // Warm Grey Accent
+  // static const _themeGlow = Color(0xFFD8DCE6); // Soft Blue-Grey Glow
+
   // =========================================================
 
   static const background = Color(0xFF0F1115);
