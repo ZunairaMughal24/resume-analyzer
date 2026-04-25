@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:resume_analyzer/core/widgets/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/resume_analysis.dart';
 
@@ -23,17 +24,10 @@ class ScoreHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassContainer(
       padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.cardBg, _scoreColor.withValues(alpha: 0.08)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _scoreColor.withValues(alpha: 0.3)),
-      ),
+      color: AppColors.cardBg.withValues(alpha: 0.4),
+      border: Border.all(color: _scoreColor.withValues(alpha: 0.3), width: 1.5),
       child: Row(
         children: [
           CircularPercentIndicator(

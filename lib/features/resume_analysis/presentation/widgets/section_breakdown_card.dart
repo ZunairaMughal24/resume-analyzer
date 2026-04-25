@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:resume_analyzer/core/widgets/section_container.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/resume_analysis.dart';
 
@@ -9,24 +10,12 @@ class SectionBreakdownCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
+    return SectionContainer(
+      title: 'Section Breakdown',
+      icon: Icons.bar_chart_rounded,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.bar_chart_rounded, size: 16, color: AppColors.primary),
-              const SizedBox(width: 8),
-              Text('Section Breakdown', style: Theme.of(context).textTheme.titleLarge),
-            ],
-          ),
-          const SizedBox(height: 20),
           ...analysis.sectionScores.map((s) => _SectionRow(score: s)),
         ],
       ),

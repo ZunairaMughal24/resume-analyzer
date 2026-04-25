@@ -11,31 +11,30 @@ class HomeHeroBanner extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
             borderRadius: BorderRadius.circular(100),
-            color: AppColors.primary.withValues(alpha: 0.08),
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary.withValues(alpha: 0.15),
+                AppColors.accent.withValues(alpha: 0.05),
+              ],
+            ),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 6,
-                height: 6,
-                decoration: const BoxDecoration(color: AppColors.accent, shape: BoxShape.circle),
-              ),
-              const SizedBox(width: 7),
-              Flexible(
-                child: Text(
-                  'Powered by Google Gemini',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: AppColors.accent, 
-                    fontSize: 11,
-                  ),
-                ),
+              const Icon(Icons.bolt_rounded, color: AppColors.accent, size: 14),
+              const SizedBox(width: 8),
+              Text(
+                'AI-POWERED ANALYSIS',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: AppColors.accent,
+                      fontSize: 10,
+                      letterSpacing: 1.5,
+                      fontWeight: FontWeight.w900,
+                    ),
               ),
             ],
           ),
@@ -43,19 +42,31 @@ class HomeHeroBanner extends StatelessWidget {
         const SizedBox(height: 18),
         ShaderMask(
           shaderCallback: (bounds) => const LinearGradient(
-            colors: [AppColors.textPrimary, Color(0xFFAA99FF)],
+            colors: [
+              Colors.white,
+              Color(0xFFD1FAE5),
+              AppColors.primary,
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ).createShader(bounds),
           child: Text(
-            'Analyze Your\nResume with AI',
-            style: Theme.of(context).textTheme.displayMedium?.copyWith(height: 1.1, color: Colors.white),
+            'Optimize Your\nCareer Path',
+            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  height: 1.05,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 42,
+                  color: Colors.white,
+                ),
           ),
-        ).animate().fadeIn(delay: 180.ms).slideY(begin: 0.08),
-        const SizedBox(height: 14),
+        ).animate().fadeIn(delay: 180.ms).slideY(begin: 0.05),
+        const SizedBox(height: 12),
         Text(
-          'Upload your resume and get instant AI-powered feedback\non ATS compatibility, skills, and actionable improvements.',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.65),
+          'Get industry-standard insights and ATS optimization\nrecommendations tailored for your next big role.',
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                height: 1.6,
+                fontSize: 15,
+              ),
         ).animate().fadeIn(delay: 260.ms),
       ],
     );

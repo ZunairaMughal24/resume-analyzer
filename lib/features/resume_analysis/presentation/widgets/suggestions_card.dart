@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:resume_analyzer/core/widgets/section_container.dart';
+import 'package:resume_analyzer/core/widgets/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/resume_analysis.dart';
 
@@ -8,7 +10,7 @@ class SuggestionsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _SectionContainer(
+    return SectionContainer(
       title: 'Actionable Steps',
       icon: Icons.tips_and_updates_rounded,
       child: Column(
@@ -48,27 +50,17 @@ class _PremiumSuggestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.8)),
-        boxShadow: [
-          BoxShadow(
-            color: _color.withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: GlassContainer(
+        borderRadius: 16,
+        blur: 8,
+        color: AppColors.surfaceElevated.withValues(alpha: 0.3),
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(width: 2.5, color: _color),
+              Container(width: 3, color: _color),
               Expanded(
                 child: Padding(
                   padding:
@@ -101,7 +93,7 @@ class _PremiumSuggestionCard extends StatelessWidget {
                                   ),
                             ),
                           ),
-                          Icon(Icons.chevron_right_rounded,
+                          const Icon(Icons.chevron_right_rounded,
                               color: AppColors.textMuted, size: 18),
                         ],
                       ),
@@ -129,53 +121,6 @@ class _PremiumSuggestionCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _SectionContainer extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final Widget child;
-  const _SectionContainer(
-      {required this.title, required this.icon, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 24),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(icon, size: 18, color: AppColors.primary),
-                ),
-                const SizedBox(width: 12),
-                Text(title, style: Theme.of(context).textTheme.headlineSmall),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: child,
-          ),
-        ],
       ),
     );
   }

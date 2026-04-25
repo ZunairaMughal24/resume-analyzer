@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:resume_analyzer/core/widgets/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
-
 
 class JobDescriptionInput extends StatefulWidget {
   final Function(String) onChanged;
@@ -16,12 +16,13 @@ class _JobDescriptionInputState extends State<JobDescriptionInput> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _expanded ? AppColors.primary.withValues(alpha: 0.5) : AppColors.border),
+    return GlassContainer(
+      borderRadius: 16,
+      border: Border.all(
+        color: _expanded 
+            ? AppColors.primary.withValues(alpha: 0.5) 
+            : Colors.white.withValues(alpha: 0.1),
+        width: _expanded ? 1.5 : 1.0,
       ),
       child: Column(
         children: [
@@ -35,8 +36,8 @@ class _JobDescriptionInputState extends State<JobDescriptionInput> {
                   Container(
                     width: 36, height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.primary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(Icons.work_outline_rounded, color: AppColors.primary, size: 18),
                   ),
@@ -68,18 +69,18 @@ class _JobDescriptionInputState extends State<JobDescriptionInput> {
                 decoration: InputDecoration(
                   hintText: 'Paste job description here to get tailored feedback...',
                   filled: true,
-                  fillColor: AppColors.surfaceElevated,
+                  fillColor: AppColors.surfaceElevated.withValues(alpha: 0.3),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppColors.border),
+                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppColors.border),
+                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                   ),
                 ),
               ),

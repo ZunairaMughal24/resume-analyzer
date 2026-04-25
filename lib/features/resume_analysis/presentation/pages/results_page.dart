@@ -11,6 +11,7 @@ import '../widgets/strengths_weaknesses_card.dart';
 import '../widgets/suggestions_card.dart';
 import '../widgets/skills_card.dart';
 import '../widgets/keywords_card.dart';
+import 'package:resume_analyzer/core/widgets/app_background.dart';
 
 class ResultsPage extends StatelessWidget {
   final ResumeAnalysis analysis;
@@ -19,41 +20,43 @@ class ResultsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          _buildAppBar(context),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  ScoreHeroCard(analysis: analysis).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(child: AtsCard(analysis: analysis)),
-                      const SizedBox(width: 12),
-                      Expanded(child: ExperienceCard(analysis: analysis)),
-                    ],
-                  ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
-                  const SizedBox(height: 20),
-                  AnalysisSummaryCard(analysis: analysis).animate().fadeIn(delay: 280.ms).slideY(begin: 0.1),
-                  const SizedBox(height: 20),
-                  SectionBreakdownCard(analysis: analysis).animate().fadeIn(delay: 360.ms).slideY(begin: 0.1),
-                  const SizedBox(height: 20),
-                  StrengthsWeaknessesCard(analysis: analysis).animate().fadeIn(delay: 440.ms).slideY(begin: 0.1),
-                  const SizedBox(height: 20),
-                  SuggestionsCard(analysis: analysis).animate().fadeIn(delay: 520.ms).slideY(begin: 0.1),
-                  const SizedBox(height: 20),
-                  SkillsCard(analysis: analysis).animate().fadeIn(delay: 600.ms).slideY(begin: 0.1),
-                  const SizedBox(height: 20),
-                  KeywordsCard(analysis: analysis).animate().fadeIn(delay: 680.ms).slideY(begin: 0.1),
-                  const SizedBox(height: 32),
-                ],
+      extendBodyBehindAppBar: true,
+      body: AppBackground(
+        child: CustomScrollView(
+          slivers: [
+            _buildAppBar(context),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 20, 14, 32),
+                child: Column(
+                  children: [
+                    ScoreHeroCard(analysis: analysis).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(child: AtsCard(analysis: analysis)),
+                        const SizedBox(width: 12),
+                        Expanded(child: ExperienceCard(analysis: analysis)),
+                      ],
+                    ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+                    AnalysisSummaryCard(analysis: analysis).animate().fadeIn(delay: 280.ms).slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+                    SectionBreakdownCard(analysis: analysis).animate().fadeIn(delay: 360.ms).slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+                    StrengthsWeaknessesCard(analysis: analysis).animate().fadeIn(delay: 440.ms).slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+                    SuggestionsCard(analysis: analysis).animate().fadeIn(delay: 520.ms).slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+                    SkillsCard(analysis: analysis).animate().fadeIn(delay: 600.ms).slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+                    KeywordsCard(analysis: analysis).animate().fadeIn(delay: 680.ms).slideY(begin: 0.1),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -66,11 +69,11 @@ class ResultsPage extends StatelessWidget {
         icon: Container(
           width: 36, height: 36,
           decoration: BoxDecoration(
-            color: AppColors.surfaceElevated,
+            gradient: const LinearGradient(
+                colors: [AppColors.primary, AppColors.primaryDark]),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.border),
           ),
-          child: const Icon(Icons.arrow_back_ios_new_rounded, size: 15, color: AppColors.textPrimary),
+          child: const Icon(Icons.arrow_back_ios_new_rounded, size: 15, color: Colors.white),
         ),
         onPressed: () => Navigator.pop(context),
       ),

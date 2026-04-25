@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:resume_analyzer/core/widgets/app_background.dart';
+import 'package:resume_analyzer/core/widgets/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -8,35 +10,39 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: const Text('Settings'),
         leading: IconButton(
           icon: Container(
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: AppColors.surfaceElevated,
+              gradient: const LinearGradient(
+                  colors: [AppColors.primary, AppColors.primaryDark]),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.border),
             ),
             child: const Icon(Icons.arrow_back_ios_new_rounded,
-                size: 15, color: AppColors.textPrimary),
+                size: 15, color: Colors.white),
           ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const _SectionHeader(title: 'About'),
-            const SizedBox(height: 16),
-            const _AboutCard()
-                .animate()
-                .fadeIn(delay: 150.ms)
-                .slideY(begin: 0.1),
-          ],
+      body: AppBackground(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 110, 24, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _SectionHeader(title: 'About'),
+              const SizedBox(height: 16),
+              const _AboutCard()
+                  .animate()
+                  .fadeIn(delay: 150.ms)
+                  .slideY(begin: 0.1),
+            ],
+          ),
         ),
       ),
     );
@@ -69,12 +75,7 @@ class _AboutCard extends StatelessWidget {
       ('Version', '1.0.0'),
       ('AI Model', 'Gemini 1.5 Flash (Firebase)'),
     ];
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
+    return GlassContainer(
       child: Column(
         children: items.asMap().entries.map((e) {
           final isLast = e.key == items.length - 1;

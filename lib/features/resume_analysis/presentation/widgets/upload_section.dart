@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:resume_analyzer/core/widgets/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
 import 'dart:io';
-
 
 class UploadSection extends StatefulWidget {
   final Function(String) onResumeExtracted;
@@ -42,14 +42,12 @@ class _UploadSectionState extends State<UploadSection> {
         String text = '';
         if (file.path != null) {
           if (file.name.endsWith('.pdf')) {
-            // For PDF: read bytes and extract text
-            // In a real app, use syncfusion_flutter_pdf or similar
-            // For demo, we'll read as bytes and do basic extraction
             final bytes = File(file.path!).readAsBytesSync();
-            // Simple text extraction - in production use proper PDF lib
+
             text = String.fromCharCodes(bytes.where((b) => b >= 32 && b < 127));
             if (text.trim().isEmpty) {
-              text = 'PDF content extracted from: ${file.name}\n[Note: For best results, paste resume text directly below]';
+              text =
+                  'PDF content extracted from: ${file.name}\n[Note: For best results, paste resume text directly below]';
             }
           } else {
             text = File(file.path!).readAsStringSync();
@@ -62,7 +60,9 @@ class _UploadSectionState extends State<UploadSection> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error reading file: $e'), backgroundColor: AppColors.error),
+            SnackBar(
+                content: Text('Error reading file: $e'),
+                backgroundColor: AppColors.error),
           );
         }
       }
@@ -113,35 +113,32 @@ class _UploadSectionState extends State<UploadSection> {
             strokeWidth: 1.5,
             dashPattern: const [8, 5],
             borderType: BorderType.RRect,
-            radius: const Radius.circular(16),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
+            radius: const Radius.circular(20),
+            child: GlassContainer(
               width: double.infinity,
               padding: const EdgeInsets.all(28),
-              decoration: BoxDecoration(
-                color: hasResume
-                    ? AppColors.accent.withValues(alpha: 0.05)
-                    : AppColors.surfaceElevated.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(15),
-              ),
+              borderRadius: 20,
               child: _isProcessing
                   ? const Column(
                       children: [
                         CircularProgressIndicator(color: AppColors.primary),
                         SizedBox(height: 12),
-                        Text('Reading file...', style: TextStyle(color: AppColors.textSecondary)),
+                        Text('Reading file...',
+                            style: TextStyle(color: AppColors.textSecondary)),
                       ],
                     )
                   : hasResume
                       ? Row(
                           children: [
                             Container(
-                              width: 44, height: 44,
+                              width: 44,
+                              height: 44,
                               decoration: BoxDecoration(
                                 color: AppColors.accent.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(Icons.description_rounded, color: AppColors.accent),
+                              child: const Icon(Icons.description_rounded,
+                                  color: AppColors.accent),
                             ),
                             const SizedBox(width: 14),
                             Expanded(
@@ -150,47 +147,60 @@ class _UploadSectionState extends State<UploadSection> {
                                 children: [
                                   Text(
                                     _fileName ?? 'Resume loaded',
-                                    style: Theme.of(context).textTheme.titleMedium,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     '${widget.resumeText.split(' ').length} words',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.accent),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(color: AppColors.accent),
                                   ),
                                 ],
                               ),
                             ),
-                            const Icon(Icons.check_circle_rounded, color: AppColors.accent),
+                            const Icon(Icons.check_circle_rounded,
+                                color: AppColors.accent),
                           ],
                         )
                       : Column(
                           children: [
                             Container(
-                              width: 56, height: 56,
+                              width: 56,
+                              height: 56,
                               decoration: BoxDecoration(
                                 color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              child: const Icon(Icons.upload_file_rounded, color: AppColors.primary, size: 28),
+                              child: const Icon(Icons.upload_file_rounded,
+                                  color: AppColors.primary, size: 28),
                             ),
                             const SizedBox(height: 14),
-                            Text('Tap to upload resume', style: Theme.of(context).textTheme.titleMedium),
+                            Text('Tap to upload resume',
+                                style: Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 4),
-                            Text('Supports PDF and TXT files', style: Theme.of(context).textTheme.bodySmall),
+                            Text('Supports PDF and TXT files',
+                                style: Theme.of(context).textTheme.bodySmall),
                           ],
                         ),
             ),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 2),
         Center(
           child: TextButton.icon(
             onPressed: _pasteText,
-            icon: const Icon(Icons.content_paste_rounded, size: 16, color: AppColors.primary),
+            icon: const Icon(Icons.content_paste_rounded,
+                size: 17, color: AppColors.primary),
             label: Text(
               'Or paste resume text',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: AppColors.primary),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelLarge
+                  ?.copyWith(color: AppColors.primary, fontSize: 15),
             ),
           ),
         ),
@@ -219,17 +229,20 @@ class _PasteTextSheetState extends State<_PasteTextSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+      padding: EdgeInsets.fromLTRB(
+          24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text('Paste Resume', style: Theme.of(context).textTheme.headlineMedium),
+              Text('Paste Resume',
+                  style: Theme.of(context).textTheme.headlineMedium),
               const Spacer(),
               IconButton(
-                icon: const Icon(Icons.close_rounded, color: AppColors.textMuted),
+                icon:
+                    const Icon(Icons.close_rounded, color: AppColors.textMuted),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -238,7 +251,10 @@ class _PasteTextSheetState extends State<_PasteTextSheet> {
           TextField(
             controller: _controller,
             maxLines: 12,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textPrimary),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: AppColors.textPrimary),
             decoration: InputDecoration(
               hintText: 'Paste your resume text here...',
               filled: true,
@@ -253,7 +269,8 @@ class _PasteTextSheetState extends State<_PasteTextSheet> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                borderSide:
+                    const BorderSide(color: AppColors.primary, width: 2),
               ),
             ),
           ),

@@ -2,23 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
-  static const background = Color(0xFF080810);
-  static const surface = Color(0xFF10101C);
-  static const surfaceElevated = Color(0xFF18182A);
-  static const cardBg = Color(0xFF13131E);
-  static const primary = Color(0xFF7C6FF7);
-  static const primaryDark = Color(0xFF5A4EE8);
-  static const accent = Color(0xFF00E5C0);
-  static const accentWarm = Color(0xFFFF7070);
-  static const accentGold = Color(0xFFFFCC55);
-  static const textPrimary = Color(0xFFF2F2FF);
-  static const textSecondary = Color(0xFF9090B8);
-  static const textMuted = Color(0xFF505070);
-  static const border = Color(0xFF22223A);
-  static const borderLight = Color(0xFF33335A);
-  static const success = Color(0xFF00E5C0);
-  static const warning = Color(0xFFFFCC55);
-  static const error = Color(0xFFFF7070);
+  // 🎨 MASTER THEME PALETTE
+
+  // -- CURRENT THEME: EMERALD GREEN --
+  static const _themePrimary = Color(0xFF00DC82);
+  static const _themePrimaryDark = Color(0xFF00B36B);
+  static const _themeAccent = Color(0xFF34D399);
+  static const _themeGlow = Color.fromARGB(255, 200, 251, 60);
+
+  // -- ALTERNATIVE THEME: OCEAN BLUE (Example, uncomment to switch) --
+  // static const _themePrimary = Color(0xFF3B82F6);
+  // static const _themePrimaryDark = Color(0xFF2563EB);
+  // static const _themeAccent = Color(0xFF60A5FA);
+  // static const _themeGlow = Color(0xFF93C5FD);
+  // =========================================================
+
+  static const background = Color(0xFF0F1115);
+  static const surface = Color(0xFF181A1F);
+  static const surfaceElevated = Color(0xFF21242C);
+  static const cardBg = Color(0xFF1C1F26);
+
+  // Semantic colors linked to the Master Palette
+  static const primary = _themePrimary;
+  static const primaryDark = _themePrimaryDark;
+  static const accent = _themeAccent;
+  static const primaryGlow = _themeGlow;
+
+  static const accentWarm = Color(0xFFFB923C);
+  static const accentGold = Color(0xFFFACC15);
+  static const textPrimary = Color(0xFFFFFFFF);
+  static const textSecondary = Color.fromARGB(255, 204, 206, 209);
+  static const textMuted = Color(0xFF64748B);
+  static const border = Color(0xFF2D333F);
+  static const borderLight = Color(0xFF3F4756);
+  static const success = Color(0xFF00DC82);
+  static const warning = Color(0xFFFACC15);
+  static const error = Color(0xFFF87171);
 
   static const gradientPrimary = LinearGradient(
     colors: [Color(0xFF7C6FF7), Color(0xFF5A4EE8)],
@@ -80,7 +99,7 @@ class AppTheme {
           fontWeight: FontWeight.w500,
         ),
         bodyLarge: GoogleFonts.inter(
-          color: AppColors.textSecondary,
+          color: AppColors.textPrimary,
           fontSize: 16,
           height: 1.6,
         ),
@@ -90,7 +109,7 @@ class AppTheme {
           height: 1.5,
         ),
         bodySmall: GoogleFonts.inter(
-          color: AppColors.textPrimary,
+          color: AppColors.textSecondary,
           fontSize: 12,
           height: 1.4,
         ),

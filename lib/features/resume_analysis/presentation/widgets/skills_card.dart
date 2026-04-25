@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:resume_analyzer/core/widgets/section_container.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/resume_analysis.dart';
 
@@ -8,7 +9,7 @@ class SkillsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _SectionContainer(
+    return SectionContainer(
       title: 'Skills Detected',
       icon: Icons.code_rounded,
       child: Wrap(
@@ -55,39 +56,6 @@ class _SkillChip extends StatelessWidget {
             height: 4,
             decoration: BoxDecoration(color: _levelColor, shape: BoxShape.circle),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionContainer extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final Widget child;
-  const _SectionContainer({required this.title, required this.icon, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 16, color: AppColors.primary),
-              const SizedBox(width: 8),
-              Text(title, style: Theme.of(context).textTheme.titleLarge),
-            ],
-          ),
-          const SizedBox(height: 16),
-          child,
         ],
       ),
     );
