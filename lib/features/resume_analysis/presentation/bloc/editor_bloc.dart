@@ -14,10 +14,7 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
     on<InitializeEditor>(_onInitialize);
     on<ToggleSuggestion>(_onToggleSuggestion);
     on<ToggleKeyword>(_onToggleKeyword);
-    on<AcceptAllSuggestions>(_onAcceptAllSuggestions);
-    on<RejectAllSuggestions>(_onRejectAllSuggestions);
-    on<AcceptAllKeywords>(_onAcceptAllKeywords);
-    on<RejectAllKeywords>(_onRejectAllKeywords);
+    on<BulkUpdateSelection>(_onBulkUpdateSelection);
     on<UpdateResumeData>(_onUpdateResumeData);
     on<UpdateResumeText>(_onUpdateResumeText);
     on<UpdatePdfFontSize>(_onUpdatePdfFontSize);
@@ -37,7 +34,7 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
 
     emit(EditorState(
       originalResumeText: event.resumeText,
-      resumeData: null, // No structured data yet user must polish first
+      resumeData: null,
       fileName: event.fileName,
       analysis: event.analysis,
       suggestions: selectableSuggestions,
@@ -62,55 +59,42 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
     emit(state.copyWith(missingKeywords: updated));
   }
 
-  void _onAcceptAllSuggestions(
-      AcceptAllSuggestions event, Emitter<EditorState> emit) {
-    final updated =
-        state.suggestions.map((s) => s.copyWith(isAccepted: true)).toList();
-    emit(state.copyWith(suggestions: updated));
-  }
+  void _onBulkUpdateSelection(
+      BulkUpdateSelection event, Emitter<EditorState> emit) {
+    List<SelectableSuggestion>? updatedSuggestions;
+    List<SelectableKeyword>? updatedKeywords;
 
-  void _onRejectAllSuggestions(
-      RejectAllSuggestions event, Emitter<EditorState> emit) {
-    final updated =
-        state.suggestions.map((s) => s.copyWith(isAccepted: false)).toList();
-    emit(state.copyWith(suggestions: updated));
-  }
+    if (event.type == SelectionType.suggestions ||
+        event.type == SelectionType.all) {
+      updatedSuggestions = state.suggestions
+          .map((s) => s.copyWith(isAccepted: event.isAccepted))
+          .toList();
+    }
 
-  void _onAcceptAllKeywords(
-      AcceptAllKeywords event, Emitter<EditorState> emit) {
-    final updated =
-        state.missingKeywords.map((k) => k.copyWith(isAccepted: true)).toList();
-    emit(state.copyWith(missingKeywords: updated));
-  }
+    if (event.type == SelectionType.keywords ||
+        event.type == SelectionType.all) {
+      updatedKeywords = state.missingKeywords
+          .map((k) => k.copyWith(isAccepted: event.isAccepted))
+          .toList();
+    }
 
-  void _onRejectAllKeywords(
-      RejectAllKeywords event, Emitter<EditorState> emit) {
-    final updated = state.missingKeywords
-        .map((k) => k.copyWith(isAccepted: false))
-        .toList();
-    emit(state.copyWith(missingKeywords: updated));
+    emit(state.copyWith(
+      suggestions: updatedSuggestions,
+      missingKeywords: updatedKeywords,
+    ));
   }
 
   void _onUpdateResumeData(UpdateResumeData event, Emitter<EditorState> emit) {
-    // Push current snapshot to undo stack before replacing
-    final newStack = state.resumeData != null
-        ? [...state.undoStack, state.resumeData!]
-        : state.undoStack;
-    emit(state.copyWith(resumeData: event.resumeData, undoStack: newStack));
+    emit(_stateWithUndo(state.copyWith(resumeData: event.resumeData)));
   }
 
-  // Legacy: converts plain text back to a minimal ResumeData for backward compat
   void _onUpdateResumeText(UpdateResumeText event, Emitter<EditorState> emit) {
-    final newStack = state.resumeData != null
-        ? [...state.undoStack, state.resumeData!]
-        : state.undoStack;
-    // Build a minimal ResumeData from plain text
     final minimalData = ResumeData(
       fullName: state.resumeData?.fullName ?? '',
       contact: state.resumeData?.contact ?? const ResumeContact(),
       summary: event.text,
     );
-    emit(state.copyWith(resumeData: minimalData, undoStack: newStack));
+    emit(_stateWithUndo(state.copyWith(resumeData: minimalData)));
   }
 
   void _onUpdatePdfFontSize(
@@ -145,15 +129,10 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
         errorMessage: failure.message,
       )),
       (polishedData) {
-        // Push current snapshot to undo stack
-        final newStack = state.resumeData != null
-            ? [...state.undoStack, state.resumeData!]
-            : state.undoStack;
-        emit(state.copyWith(
+        emit(_stateWithUndo(state.copyWith(
           resumeData: polishedData,
-          undoStack: newStack,
           status: EditorStatus.loaded,
-        ));
+        )));
       },
     );
   }
@@ -172,5 +151,13 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
       resumeData: previousData,
       undoStack: newStack,
     ));
+  }
+
+  /// Helper to manage undo stack automatically when updating data
+  EditorState _stateWithUndo(EditorState newState) {
+    if (state.resumeData == null) return newState;
+    return newState.copyWith(
+      undoStack: [...state.undoStack, state.resumeData!],
+    );
   }
 }

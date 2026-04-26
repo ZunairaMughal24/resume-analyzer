@@ -74,8 +74,7 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
             GestureDetector(
               onTap: () {
                 context.read<EditorBloc>()
-                  ..add(AcceptAllSuggestions())
-                  ..add(AcceptAllKeywords())
+                  ..add(const BulkUpdateSelection(isAccepted: true, type: SelectionType.all))
                   ..add(PolishWithAI());
               },
               child: Container(
@@ -328,17 +327,5 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
 
   void _update(BuildContext context, ResumeData updated) {
     context.read<EditorBloc>().add(UpdateResumeData(updated));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Row(children: [
-        Icon(Icons.check_rounded, color: Colors.white, size: 16),
-        SizedBox(width: 8),
-        Text('Changes saved'),
-      ]),
-      backgroundColor: AppColors.success.withOpacity(0.9),
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      margin: const EdgeInsets.all(16),
-      duration: const Duration(seconds: 2),
-    ));
   }
 }

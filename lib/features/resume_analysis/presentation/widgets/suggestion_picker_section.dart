@@ -30,9 +30,9 @@ class SuggestionPickerSection extends StatelessWidget {
                   count: state.acceptedSuggestionsCount,
                   total: state.suggestions.length,
                   onAcceptAll: () =>
-                      context.read<EditorBloc>().add(AcceptAllSuggestions()),
+                      context.read<EditorBloc>().add(const BulkUpdateSelection(isAccepted: true, type: SelectionType.suggestions)),
                   onRejectAll: () =>
-                      context.read<EditorBloc>().add(RejectAllSuggestions()),
+                      context.read<EditorBloc>().add(const BulkUpdateSelection(isAccepted: false, type: SelectionType.suggestions)),
                 ),
                 const SizedBox(height: 10),
                 ...state.suggestions.asMap().entries.map(
@@ -55,9 +55,9 @@ class SuggestionPickerSection extends StatelessWidget {
                   count: state.acceptedKeywordsCount,
                   total: state.missingKeywords.length,
                   onAcceptAll: () =>
-                      context.read<EditorBloc>().add(AcceptAllKeywords()),
+                      context.read<EditorBloc>().add(const BulkUpdateSelection(isAccepted: true, type: SelectionType.keywords)),
                   onRejectAll: () =>
-                      context.read<EditorBloc>().add(RejectAllKeywords()),
+                      context.read<EditorBloc>().add(const BulkUpdateSelection(isAccepted: false, type: SelectionType.keywords)),
                 ),
                 const SizedBox(height: 10),
                 Wrap(

@@ -40,17 +40,16 @@ class ToggleKeyword extends EditorEvent {
   List<Object?> get props => [index];
 }
 
-//Accept all suggestions at once.
-class AcceptAllSuggestions extends EditorEvent {}
+enum SelectionType { suggestions, keywords, all }
 
-//Reject (clear) all suggestions.
-class RejectAllSuggestions extends EditorEvent {}
-
-//Accept all missing keywords at once.
-class AcceptAllKeywords extends EditorEvent {}
-
-//Reject (clear) all keywords.
-class RejectAllKeywords extends EditorEvent {}
+//Bulk update for suggestions or keywords.
+class BulkUpdateSelection extends EditorEvent {
+  final bool isAccepted;
+  final SelectionType type;
+  const BulkUpdateSelection({required this.isAccepted, required this.type});
+  @override
+  List<Object?> get props => [isAccepted, type];
+}
 
 /// Updates the structured ResumeData (from section-based editor).
 class UpdateResumeData extends EditorEvent {

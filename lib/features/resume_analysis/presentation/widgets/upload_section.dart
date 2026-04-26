@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:resume_analyzer/core/widgets/glass_container.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/resume_storage.dart';
+
 import 'dart:io';
 
 class UploadSection extends StatefulWidget {
@@ -44,7 +44,7 @@ class _UploadSectionState extends State<UploadSection> {
         String text = '';
         if (file.path != null) {
           if (file.name.endsWith('.pdf')) {
-            ResumeStorage.currentPdfPath = file.path;
+
 
             final bytes = File(file.path!).readAsBytesSync();
             final PdfDocument document = PdfDocument(inputBytes: bytes);
