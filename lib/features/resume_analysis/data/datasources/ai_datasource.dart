@@ -10,12 +10,12 @@ class AiDatasource {
     String resumeText, {
     String? jobDescription,
   }) async {
-    // 1. Try these models in order of confirmed success and quota availability
+    // Try models in order of confirmed success (2.5-flash works best)
     final List<String> modelsToTry = [
-      'gemini-flash-latest',
-      'gemini-2.0-flash',
-      'gemini-1.5-flash',
       'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-flash-latest',
+      'gemini-1.5-flash',
     ];
 
     for (String modelName in modelsToTry) {
@@ -41,19 +41,27 @@ class AiDatasource {
                 ],
                 'generationConfig': {
                   'temperature': 0.1,
-                  'maxOutputTokens': 8192,
+                  'maxOutputTokens': 16384,
                   'responseMimeType': 'application/json',
                 }
               }),
             )
-            .timeout(const Duration(seconds: 45));
+            .timeout(const Duration(seconds: 90));
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
           final String rawText =
               data['candidates'][0]['content']['parts'][0]['text'];
           if (kDebugMode) print('✅ SUCCESS WITH $modelName!');
-          return jsonDecode(rawText) as Map<String, dynamic>;
+
+          // Try parsing, with truncation repair fallback
+          try {
+            return jsonDecode(rawText) as Map<String, dynamic>;
+          } catch (_) {
+            if (kDebugMode) print('⚠️ JSON truncated, attempting repair...');
+            final repaired = _repairTruncatedJson(rawText);
+            return jsonDecode(repaired) as Map<String, dynamic>;
+          }
         } else {
           if (kDebugMode) {
             print('❌ $modelName FAILED (${response.statusCode})');
@@ -68,6 +76,40 @@ class AiDatasource {
 
     print('🛑 ALL MODELS FAILED. FALLING BACK TO MOCK DATA.');
     return _getMockData();
+  }
+
+  String _repairTruncatedJson(String jsonStr) {
+    String repaired = jsonStr.trim();
+
+    int openBraces = 0;
+    int openBrackets = 0;
+    bool inString = false;
+    bool isEscaped = false;
+
+    for (int i = 0; i < repaired.length; i++) {
+      String char = repaired[i];
+      if (char == '"' && !isEscaped) {
+        inString = !inString;
+      }
+      if (!inString) {
+        if (char == '{') openBraces++;
+        if (char == '}') openBraces--;
+        if (char == '[') openBrackets++;
+        if (char == ']') openBrackets--;
+      }
+      isEscaped = (char == '\\' && !isEscaped);
+    }
+
+    if (inString) repaired += '"';
+    while (openBrackets > 0) {
+      repaired += ']';
+      openBrackets--;
+    }
+    while (openBraces > 0) {
+      repaired += '}';
+      openBraces--;
+    }
+    return repaired;
   }
 
   Future<void> listAvailableModels() async {
@@ -118,6 +160,189 @@ class AiDatasource {
     Resume Content:
     $resumeText
     $jobCtx''';
+  }
+
+  /// Sends resume text + accepted improvements to AI for polishing.
+  /// Returns structured JSON matching the ResumeData schema.
+  Future<Map<String, dynamic>> polishResume(
+    String resumeText, {
+    required List<String> acceptedSuggestions,
+    required List<String> acceptedKeywords,
+  }) async {
+    final List<String> modelsToTry = [
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-flash-latest',
+      'gemini-1.5-flash',
+    ];
+
+    for (String modelName in modelsToTry) {
+      final String url =
+          'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent';
+
+      try {
+        if (kDebugMode) {
+          print('✨ ATTEMPTING AI POLISH WITH: $modelName...');
+        }
+
+        final response = await http
+            .post(
+              Uri.parse('$url?key=$_apiKey'),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode({
+                'contents': [
+                  {
+                    'parts': [
+                      {
+                        'text': _generatePolishPrompt(
+                            resumeText, acceptedSuggestions, acceptedKeywords)
+                      }
+                    ]
+                  }
+                ],
+                'generationConfig': {
+                  'temperature': 0.2,
+                  'maxOutputTokens': 16384,
+                  'responseMimeType': 'application/json',
+                }
+              }),
+            )
+            .timeout(const Duration(seconds: 90));
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          final String rawText =
+              data['candidates'][0]['content']['parts'][0]['text'];
+          if (kDebugMode) print('✅ POLISH SUCCESS WITH $modelName!');
+
+          try {
+            return jsonDecode(rawText) as Map<String, dynamic>;
+          } catch (_) {
+            if (kDebugMode)
+              print('⚠️ Polish JSON truncated, attempting repair...');
+            final repaired = _repairTruncatedJson(rawText);
+            return jsonDecode(repaired) as Map<String, dynamic>;
+          }
+        } else {
+          if (kDebugMode) {
+            print('❌ $modelName POLISH FAILED (${response.statusCode})');
+          }
+          continue;
+        }
+      } catch (e) {
+        if (kDebugMode) print('⚠️ $modelName POLISH EXCEPTION: $e');
+        continue;
+      }
+    }
+
+    if (kDebugMode) {
+      print('🛑 ALL POLISH MODELS FAILED. FALLING BACK TO MOCK RESUME DATA.');
+    }
+    return _getMockPolishedResumeData(resumeText);
+  }
+
+  /// Fallback mock that returns a ResumeData-compatible JSON structure.
+  Map<String, dynamic> _getMockPolishedResumeData(String originalText) {
+    return {
+      'fullName': 'Your Name',
+      'contact': {
+        'email': 'email@example.com',
+        'phone': '',
+        'location': '',
+        'linkedin': '',
+        'github': '',
+        'website': '',
+      },
+      'summary':
+          'AI polish unavailable (API offline). This is mock data for UI testing. Your original resume text has been preserved in the experience section.',
+      'experience': [
+        {
+          'title': 'See Original Resume',
+          'company': 'Original Text Below',
+          'dates': '',
+          'location': '',
+          'bullets': [
+            originalText.substring(0, originalText.length.clamp(0, 500))
+          ],
+        }
+      ],
+      'education': [],
+      'skills': ['See original resume for skills'],
+      'certifications': [],
+      'projects': [],
+      'languages': [],
+    };
+  }
+
+  String _generatePolishPrompt(
+    String resumeText,
+    List<String> acceptedSuggestions,
+    List<String> acceptedKeywords,
+  ) {
+    final suggestionsBlock = acceptedSuggestions.isNotEmpty
+        ? '\n\nAPPROVED IMPROVEMENTS TO APPLY:\n${acceptedSuggestions.map((s) => '• $s').join('\n')}'
+        : '';
+
+    final keywordsBlock = acceptedKeywords.isNotEmpty
+        ? '\n\nMISSING KEYWORDS TO NATURALLY INCORPORATE:\n${acceptedKeywords.map((k) => '• $k').join('\n')}'
+        : '';
+
+    return '''You are an expert professional resume writer and ATS optimizer.
+
+TASK: Extract and restructure all resume content from the raw text below, then apply the approved improvements. Return ONLY a valid JSON object — no markdown, no explanation.
+
+CRITICAL RULES:
+1. The input text was PDF-extracted and may be scattered. Parse it intelligently.
+2. Do NOT invent information not present in the original or approved improvements.
+3. Naturally incorporate the approved keywords where they fit contextually.
+4. Write bullet points as strong, action-verb-led achievement statements.
+5. Keep a professional, high-impact tone.
+$suggestionsBlock
+$keywordsBlock
+
+Return this EXACT JSON structure:
+{
+  "fullName": "Full name of the candidate",
+  "contact": {
+    "email": "email address or empty string",
+    "phone": "phone number or empty string",
+    "location": "city, state/country or empty string",
+    "linkedin": "LinkedIn URL or empty string",
+    "github": "GitHub URL or empty string",
+    "website": "portfolio/website URL or empty string"
+  },
+  "summary": "A polished 2-3 sentence professional summary",
+  "experience": [
+    {
+      "title": "Job Title",
+      "company": "Company Name",
+      "dates": "Month Year – Month Year",
+      "location": "City, State or empty string",
+      "bullets": ["Achievement or responsibility 1", "Achievement 2"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Degree Name",
+      "institution": "University/School Name",
+      "dates": "Year or Year–Year",
+      "details": "GPA, honors, or relevant coursework or empty string"
+    }
+  ],
+  "skills": ["Skill 1", "Skill 2", "Skill 3"],
+  "certifications": ["Certification Name and Year"],
+  "projects": [
+    {
+      "name": "Project Name",
+      "description": "One sentence description or empty string",
+      "bullets": ["Key achievement or tech used"]
+    }
+  ],
+  "languages": ["Language (Proficiency)"]
+}
+
+ORIGINAL RESUME TEXT (may be scattered/messy — parse intelligently):
+$resumeText''';
   }
 
   Map<String, dynamic> _getMockData() {

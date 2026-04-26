@@ -12,22 +12,26 @@ import '../widgets/suggestions_card.dart';
 import '../widgets/skills_card.dart';
 import '../widgets/keywords_card.dart';
 import 'package:resume_analyzer/core/widgets/app_background.dart';
+import 'resume_editor_page.dart';
 
 class ResultsPage extends StatelessWidget {
   final ResumeAnalysis analysis;
-  const ResultsPage({super.key, required this.analysis});
+  final String resumeText;
+  const ResultsPage({super.key, required this.analysis, required this.resumeText});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      floatingActionButton: _buildEditFab(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: AppBackground(
         child: CustomScrollView(
           slivers: [
             _buildAppBar(context),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 20, 14, 32),
+                padding: const EdgeInsets.fromLTRB(14, 20, 14, 80),
                 child: Column(
                   children: [
                     ScoreHeroCard(analysis: analysis).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
@@ -59,6 +63,45 @@ class ResultsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildEditFab(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ResumeEditorPage(
+            resumeText: resumeText,
+            fileName: 'My Resume',
+            analysis: analysis,
+          ),
+        ),
+      ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryDark]),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 6)),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.auto_fix_high_rounded, color: Colors.white, size: 20),
+            const SizedBox(width: 10),
+            Text(
+              'Edit & Polish Resume',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).animate().fadeIn(delay: 800.ms).slideY(begin: 0.3);
   }
 
   Widget _buildAppBar(BuildContext context) {

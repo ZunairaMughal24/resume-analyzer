@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (_) => ResultsPage(analysis: state.analysis)),
+                builder: (_) => ResultsPage(analysis: state.analysis, resumeText: _resumeText)),
           ).then((_) => bloc.add(ResetResumeEvent()));
         } else if (state is ResumeError) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
