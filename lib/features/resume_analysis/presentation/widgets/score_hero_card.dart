@@ -26,8 +26,8 @@ class ScoreHeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassContainer(
       padding: const EdgeInsets.all(28),
-      color: AppColors.cardBg.withValues(alpha: 0.4),
-      border: Border.all(color: _scoreColor.withValues(alpha: 0.3), width: 1.5),
+      color: AppColors.cardBg.withOpacity(0.4),
+      border: Border.all(color: _scoreColor.withOpacity(0.3), width: 1.5),
       child: Row(
         children: [
           CircularPercentIndicator(
@@ -56,7 +56,7 @@ class ScoreHeroCard extends StatelessWidget {
               ],
             ),
             progressColor: _scoreColor,
-            backgroundColor: _scoreColor.withValues(alpha: 0.12),
+            backgroundColor: _scoreColor.withOpacity(0.12),
             circularStrokeCap: CircularStrokeCap.round,
             animation: true,
             animationDuration: 1200,
@@ -96,9 +96,9 @@ class _ScorePill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
+        color: color.withOpacity(0.12),
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: RichText(
         text: TextSpan(

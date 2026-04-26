@@ -162,12 +162,12 @@ class _PdfPreviewTabState extends State<PdfPreviewTab> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: AppColors.surfaceElevated.withValues(alpha: 0.95),
+            color: AppColors.surfaceElevated.withOpacity(0.95),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+            border: Border.all(color: AppColors.border.withOpacity(0.5)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               )
@@ -191,7 +191,7 @@ class _PdfPreviewTabState extends State<PdfPreviewTab> {
                     activeTrackColor: AppColors.primary,
                     inactiveTrackColor: AppColors.border,
                     thumbColor: AppColors.primary,
-                    overlayColor: AppColors.primary.withValues(alpha: 0.2),
+                    overlayColor: AppColors.primary.withOpacity(0.2),
                     trackHeight: 4,
                     thumbShape:
                         const RoundSliderThumbShape(enabledThumbRadius: 8),

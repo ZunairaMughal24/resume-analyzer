@@ -37,7 +37,7 @@ class ExperienceCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.accentGold.withValues(alpha: 0.12),
+              color: AppColors.accentGold.withOpacity(0.12),
               borderRadius: BorderRadius.circular(6),
             ),
             child: RichText(

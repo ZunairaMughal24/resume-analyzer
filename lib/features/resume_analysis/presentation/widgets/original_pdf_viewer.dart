@@ -14,7 +14,7 @@ class OriginalPdfViewer extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.broken_image_rounded, size: 48, color: AppColors.textMuted.withValues(alpha: 0.5)),
+            Icon(Icons.broken_image_rounded, size: 48, color: AppColors.textMuted.withOpacity(0.5)),
             const SizedBox(height: 16),
             const Text(
               'Original PDF not available.\nPlease upload a PDF instead of pasting text.',

@@ -18,9 +18,9 @@ class SectionCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.8),
+        color: AppColors.surface.withOpacity(0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+        border: Border.all(color: AppColors.border.withOpacity(0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,12 +29,12 @@ class SectionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.08),
+              color: AppColors.primary.withOpacity(0.08),
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(16)),
               border: Border(
                 bottom:
-                    BorderSide(color: AppColors.border.withValues(alpha: 0.5)),
+                    BorderSide(color: AppColors.border.withOpacity(0.5)),
               ),
             ),
             child: Row(

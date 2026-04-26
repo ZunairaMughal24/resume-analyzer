@@ -63,7 +63,7 @@ class ProjectEditor extends StatelessWidget {
           },
         ),
         if (index < total - 1)
-          Divider(height: 20, color: AppColors.border.withValues(alpha: 0.4)),
+          Divider(height: 20, color: AppColors.border.withOpacity(0.4)),
       ],
     );
   }

@@ -17,7 +17,7 @@ class AppBackground extends StatelessWidget {
           top: -300,
           right: -150,
           child: _GlowBlob(
-            color: AppColors.primary.withValues(alpha: 0.18),
+            color: AppColors.primary.withOpacity(0.18),
             size: 700,
           ).animate(onPlay: (c) => c.repeat(reverse: true)).move(
               begin: const Offset(-50, -30),
@@ -30,7 +30,7 @@ class AppBackground extends StatelessWidget {
           bottom: -200,
           left: -200,
           child: _GlowBlob(
-            color: AppColors.accent.withValues(alpha: 0.15),
+            color: AppColors.accent.withOpacity(0.15),
             size: 800,
           ).animate(onPlay: (c) => c.repeat(reverse: true)).move(
               begin: const Offset(50, 30),
@@ -43,7 +43,7 @@ class AppBackground extends StatelessWidget {
           top: 200,
           left: -120,
           child: _GlowBlob(
-            color: AppColors.primaryGlow.withValues(alpha: 0.15),
+            color: AppColors.primaryGlow.withOpacity(0.15),
             size: 500,
           ).animate(onPlay: (c) => c.repeat(reverse: true)).move(
               begin: const Offset(0, 0),
@@ -56,7 +56,7 @@ class AppBackground extends StatelessWidget {
           bottom: 150,
           right: -150,
           child: _GlowBlob(
-            color: AppColors.accentGold.withValues(alpha: 0.06),
+            color: AppColors.accentGold.withOpacity(0.06),
             size: 600,
           ).animate(onPlay: (c) => c.repeat(reverse: true)).move(
               begin: const Offset(-40, 40),
@@ -97,7 +97,7 @@ class _GlowBlob extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(
-          colors: [color, color.withValues(alpha: 0)],
+          colors: [color, color.withOpacity(0)],
           stops: const [0.2, 1.0],
         ),
       ),

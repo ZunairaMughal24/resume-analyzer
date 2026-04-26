@@ -17,7 +17,7 @@ class SelectableSuggestion {
   }
 
   //Formats suggestion as a single string for the AI prompt.
-  String toPromptString() => '\${suggestion.title}: \${suggestion.description}';
+  String toPromptString() => '${suggestion.title}: ${suggestion.description}';
 }
 
 //Wraps a missing keyword string with mutable selection state.

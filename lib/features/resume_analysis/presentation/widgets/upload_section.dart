@@ -146,7 +146,7 @@ class _UploadSectionState extends State<UploadSection> {
                               width: 44,
                               height: 44,
                               decoration: BoxDecoration(
-                                color: AppColors.accent.withValues(alpha: 0.15),
+                                color: AppColors.accent.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(Icons.description_rounded,
@@ -184,7 +184,7 @@ class _UploadSectionState extends State<UploadSection> {
                               width: 56,
                               height: 56,
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
+                                color: AppColors.primary.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: const Icon(Icons.upload_file_rounded,

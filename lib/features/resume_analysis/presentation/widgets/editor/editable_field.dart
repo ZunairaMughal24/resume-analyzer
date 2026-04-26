@@ -81,18 +81,18 @@ class _EditableFieldState extends State<EditableField> {
               .bodySmall
               ?.copyWith(color: AppColors.textMuted, fontSize: 11),
           filled: true,
-          fillColor: AppColors.surfaceElevated.withValues(alpha: 0.6),
+          fillColor: AppColors.surfaceElevated.withOpacity(0.6),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide:
-                BorderSide(color: AppColors.border.withValues(alpha: 0.5)),
+                BorderSide(color: AppColors.border.withOpacity(0.5)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide:
-                BorderSide(color: AppColors.border.withValues(alpha: 0.5)),
+                BorderSide(color: AppColors.border.withOpacity(0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),

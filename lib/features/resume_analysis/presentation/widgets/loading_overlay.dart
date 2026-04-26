@@ -8,7 +8,7 @@ class LoadingOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.background.withValues(alpha: 0.85),
+      color: AppColors.background.withOpacity(0.85),
       child: Center(
         child: Container(
           padding: const EdgeInsets.all(36),
@@ -16,7 +16,7 @@ class LoadingOverlay extends StatelessWidget {
             color: AppColors.cardBg,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: AppColors.border),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 40)],
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 40)],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -29,7 +29,7 @@ class LoadingOverlay extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                 ),
                 child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 30),
-              ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1500.ms, color: AppColors.primaryDark.withValues(alpha: 0.5)),
+              ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1500.ms, color: AppColors.primaryDark.withOpacity(0.5)),
               const SizedBox(height: 24),
               Text('Analyzing Resume', style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 8),

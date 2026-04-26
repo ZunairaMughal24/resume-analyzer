@@ -16,11 +16,11 @@ class HomeHeroBanner extends StatelessWidget {
             borderRadius: BorderRadius.circular(100),
             gradient: LinearGradient(
               colors: [
-                AppColors.primary.withValues(alpha: 0.15),
-                AppColors.accent.withValues(alpha: 0.05),
+                AppColors.primary.withOpacity(0.15),
+                AppColors.accent.withOpacity(0.05),
               ],
             ),
-            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+            border: Border.all(color: AppColors.primary.withOpacity(0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

@@ -43,7 +43,7 @@ class AtsCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: analysis.atsScore / 100,
-              backgroundColor: _color.withValues(alpha: 0.15),
+              backgroundColor: _color.withOpacity(0.15),
               color: _color,
               minHeight: 6,
             ),

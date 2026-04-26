@@ -20,8 +20,8 @@ class _JobDescriptionInputState extends State<JobDescriptionInput> {
       borderRadius: 16,
       border: Border.all(
         color: _expanded 
-            ? AppColors.primary.withValues(alpha: 0.5) 
-            : Colors.white.withValues(alpha: 0.1),
+            ? AppColors.primary.withOpacity(0.5) 
+            : Colors.white.withOpacity(0.1),
         width: _expanded ? 1.5 : 1.0,
       ),
       child: Column(
@@ -36,7 +36,7 @@ class _JobDescriptionInputState extends State<JobDescriptionInput> {
                   Container(
                     width: 36, height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.15),
+                      color: AppColors.primary.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(Icons.work_outline_rounded, color: AppColors.primary, size: 18),
@@ -69,14 +69,14 @@ class _JobDescriptionInputState extends State<JobDescriptionInput> {
                 decoration: InputDecoration(
                   hintText: 'Paste job description here to get tailored feedback...',
                   filled: true,
-                  fillColor: AppColors.surfaceElevated.withValues(alpha: 0.3),
+                  fillColor: AppColors.surfaceElevated.withOpacity(0.3),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),

@@ -84,7 +84,7 @@ class ResultsPage extends StatelessWidget {
           gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryDark]),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 6)),
+            BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 6)),
           ],
         ),
         child: Row(
@@ -127,9 +127,9 @@ class ResultsPage extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+              border: Border.all(color: AppColors.primary.withOpacity(0.3)),
             ),
             child: Text(
               analysis.industry,

@@ -93,7 +93,7 @@ class _FeatureCard extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
+                color: color.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(10)),
             child: Icon(icon, color: color, size: 18),
           ),

@@ -32,18 +32,18 @@ class AnalyzeButton extends StatelessWidget {
                   end: Alignment.bottomRight,
                 )
               : null,
-          color: active ? null : AppColors.surfaceElevated.withValues(alpha: 0.15),
+          color: active ? null : AppColors.surfaceElevated.withOpacity(0.15),
           borderRadius: BorderRadius.circular(18),
-          border: active ? null : Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
+          border: active ? null : Border.all(color: Colors.white.withOpacity(0.1), width: 1.5),
           boxShadow: active
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.5),
+                    color: AppColors.primary.withOpacity(0.5),
                     blurRadius: 30,
                     offset: const Offset(0, 10),
                   ),
                   BoxShadow(
-                    color: AppColors.accent.withValues(alpha: 0.2),
+                    color: AppColors.accent.withOpacity(0.2),
                     blurRadius: 40,
                     offset: const Offset(0, 0),
                   ),

@@ -84,7 +84,7 @@ class SuggestionPickerSection extends StatelessWidget {
                       children: [
                         Icon(Icons.check_circle_outline_rounded,
                             size: 56,
-                            color: AppColors.success.withValues(alpha: 0.5)),
+                            color: AppColors.success.withOpacity(0.5)),
                         const SizedBox(height: 16),
                         Text(
                           'No suggestions available',
@@ -127,8 +127,8 @@ class _AcceptanceSummary extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.2),
-                  AppColors.accent.withValues(alpha: 0.1),
+                  AppColors.primary.withOpacity(0.2),
+                  AppColors.accent.withOpacity(0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(10),
@@ -198,7 +198,7 @@ class _SectionHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: AppColors.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, size: 16, color: AppColors.primary),
@@ -217,7 +217,7 @@ class _SectionHeader extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
             color: count > 0
-                ? AppColors.success.withValues(alpha: 0.1)
+                ? AppColors.success.withOpacity(0.1)
                 : AppColors.surfaceElevated,
             borderRadius: BorderRadius.circular(6),
           ),
@@ -252,9 +252,9 @@ class _MiniButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: AppColors.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+          border: Border.all(color: AppColors.primary.withOpacity(0.2)),
         ),
         child: Text(
           label,
@@ -316,13 +316,13 @@ class _SuggestionTile extends StatelessWidget {
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
             color: isAccepted
-                ? AppColors.primary.withValues(alpha: 0.06)
-                : AppColors.surfaceElevated.withValues(alpha: 0.4),
+                ? AppColors.primary.withOpacity(0.06)
+                : AppColors.surfaceElevated.withOpacity(0.4),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isAccepted
-                  ? AppColors.primary.withValues(alpha: 0.35)
-                  : AppColors.border.withValues(alpha: 0.5),
+                  ? AppColors.primary.withOpacity(0.35)
+                  : AppColors.border.withOpacity(0.5),
               width: isAccepted ? 1.5 : 1,
             ),
           ),
@@ -356,10 +356,10 @@ class _SuggestionTile extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: color.withValues(alpha: 0.1),
+                                color: color.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
-                                    color: color.withValues(alpha: 0.2)),
+                                    color: color.withOpacity(0.2)),
                               ),
                               child: Text(
                                 _priorityLabel(selectable.suggestion.priority),
@@ -386,7 +386,7 @@ class _SuggestionTile extends StatelessWidget {
                                 color: isAccepted
                                     ? AppColors.primary
                                     : AppColors.textMuted
-                                        .withValues(alpha: 0.5),
+                                        .withOpacity(0.5),
                               ),
                             ),
                           ],
@@ -444,13 +444,13 @@ class _KeywordChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isAccepted
-              ? AppColors.primary.withValues(alpha: 0.12)
-              : AppColors.surfaceElevated.withValues(alpha: 0.5),
+              ? AppColors.primary.withOpacity(0.12)
+              : AppColors.surfaceElevated.withOpacity(0.5),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isAccepted
-                ? AppColors.primary.withValues(alpha: 0.4)
-                : AppColors.border.withValues(alpha: 0.4),
+                ? AppColors.primary.withOpacity(0.4)
+                : AppColors.border.withOpacity(0.4),
           ),
         ),
         child: Row(

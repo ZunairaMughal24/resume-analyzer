@@ -34,15 +34,20 @@ class _SaveShareSheetState extends State<SaveShareSheet> {
         data: widget.resumeData,
         resumeText: widget.resumeText,
       );
-      setState(() {
-        _isBusy = false;
-      });
-      if (mounted) _showSuccess('PDF saved to: ${file.path}');
-    } catch (e) {
-      setState(() {
-        _isBusy = false;
-      });
-      if (mounted) _showError('Failed to export PDF: $e');
+      if (mounted) {
+        setState(() {
+          _isBusy = false;
+        });
+        if (file != null) _showSuccess('PDF saved successfully');
+      }
+    } catch (e, stacktrace) {
+      debugPrint('ERROR in _exportPdf: $e\n$stacktrace');
+      if (mounted) {
+        setState(() {
+          _isBusy = false;
+        });
+        _showError('Failed to export PDF: $e');
+      }
     }
   }
 
@@ -56,15 +61,20 @@ class _SaveShareSheetState extends State<SaveShareSheet> {
         data: widget.resumeData,
         resumeText: widget.resumeText,
       );
-      setState(() {
-        _isBusy = false;
-      });
-      if (mounted) _showSuccess('TXT saved to: ${file.path}');
-    } catch (e) {
-      setState(() {
-        _isBusy = false;
-      });
-      if (mounted) _showError('Failed to export TXT: $e');
+      if (mounted) {
+        setState(() {
+          _isBusy = false;
+        });
+        if (file != null) _showSuccess('TXT saved successfully');
+      }
+    } catch (e, stacktrace) {
+      debugPrint('ERROR in _exportTxt: $e\n$stacktrace');
+      if (mounted) {
+        setState(() {
+          _isBusy = false;
+        });
+        _showError('Failed to export TXT: $e');
+      }
     }
   }
 
@@ -73,24 +83,47 @@ class _SaveShareSheetState extends State<SaveShareSheet> {
       _isBusy = true;
     });
     try {
-      final file = await ResumeExporter.exportAsPdf(
+      final file = await ResumeExporter.generateTempPdf(
         widget.fileName,
         data: widget.resumeData,
         resumeText: widget.resumeText,
       );
       await ResumeExporter.shareFile(file);
-      setState(() => _isBusy = false);
-    } catch (e) {
-      setState(() {
-        _isBusy = false;
-      });
-      if (mounted) _showError('Failed to share: $e');
+      if (mounted) {
+        setState(() => _isBusy = false);
+      }
+    } catch (e, stacktrace) {
+      debugPrint('ERROR in _sharePdf: $e\n$stacktrace');
+      if (mounted) {
+        setState(() {
+          _isBusy = false;
+        });
+        _showError('Failed to share: $e');
+      }
     }
   }
 
   Future<void> _shareText() async {
-    final text = widget.resumeData?.toPlainText() ?? widget.resumeText;
-    await ResumeExporter.shareText(text);
+    setState(() {
+      _isBusy = true;
+    });
+    try {
+      final text = widget.resumeData?.toPlainText() ?? widget.resumeText;
+      await ResumeExporter.shareText(text);
+      if (mounted) {
+        setState(() {
+          _isBusy = false;
+        });
+      }
+    } catch (e, stacktrace) {
+      debugPrint('ERROR in _shareText: $e\n$stacktrace');
+      if (mounted) {
+        setState(() {
+          _isBusy = false;
+        });
+        _showError('Failed to share text: $e');
+      }
+    }
   }
 
   void _rename() {
@@ -145,7 +178,7 @@ class _SaveShareSheetState extends State<SaveShareSheet> {
   void _showSuccess(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg),
-      backgroundColor: AppColors.success.withValues(alpha: 0.9),
+      backgroundColor: AppColors.success.withOpacity(0.9),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       margin: const EdgeInsets.all(16),
@@ -261,16 +294,16 @@ class _ActionTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.surfaceElevated.withValues(alpha: 0.6),
+          color: AppColors.surfaceElevated.withOpacity(0.6),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+          border: Border.all(color: AppColors.border.withOpacity(0.5)),
         ),
         child: Row(children: [
           Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
+                color: color.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(10)),
             child: Icon(icon, size: 20, color: color),
           ),
@@ -293,7 +326,7 @@ class _ActionTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis),
               ])),
           Icon(Icons.chevron_right_rounded,
-              color: AppColors.textMuted.withValues(alpha: 0.5), size: 20),
+              color: AppColors.textMuted.withOpacity(0.5), size: 20),
         ]),
       ),
     );

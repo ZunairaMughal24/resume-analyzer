@@ -57,7 +57,7 @@ class _SectionRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: score.score / 100,
-              backgroundColor: _color.withValues(alpha: 0.12),
+              backgroundColor: _color.withOpacity(0.12),
               color: _color,
               minHeight: 6,
             ),

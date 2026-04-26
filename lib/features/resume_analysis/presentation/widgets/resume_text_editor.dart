@@ -88,7 +88,7 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.35),
+                      color: AppColors.primary.withOpacity(0.35),
                       blurRadius: 16,
                       offset: const Offset(0, 6),
                     ),
@@ -334,7 +334,7 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
         SizedBox(width: 8),
         Text('Changes saved'),
       ]),
-      backgroundColor: AppColors.success.withValues(alpha: 0.9),
+      backgroundColor: AppColors.success.withOpacity(0.9),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       margin: const EdgeInsets.all(16),

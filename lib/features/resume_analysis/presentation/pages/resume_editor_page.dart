@@ -97,7 +97,7 @@ class _EditorPageBodyState extends State<_EditorPageBody>
               SizedBox(width: 8),
               Text('Resume polished successfully!'),
             ]),
-            backgroundColor: AppColors.primary.withValues(alpha: 0.9),
+            backgroundColor: AppColors.primary.withOpacity(0.9),
             behavior: SnackBarBehavior.floating,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -118,7 +118,7 @@ class _EditorPageBodyState extends State<_EditorPageBody>
                 color: AppColors.surface,
                 border: Border(
                     bottom: BorderSide(
-                        color: AppColors.border.withValues(alpha: 0.5))),
+                        color: AppColors.border.withOpacity(0.5))),
               ),
               child: TabBar(
                 controller: _tabController,

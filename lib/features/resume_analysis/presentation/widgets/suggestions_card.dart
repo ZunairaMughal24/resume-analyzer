@@ -55,7 +55,7 @@ class _PremiumSuggestionCard extends StatelessWidget {
       child: GlassContainer(
         borderRadius: 16,
         blur: 8,
-        color: AppColors.surfaceElevated.withValues(alpha: 0.3),
+        color: AppColors.surfaceElevated.withOpacity(0.3),
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -75,10 +75,10 @@ class _PremiumSuggestionCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: _color.withValues(alpha: 0.1),
+                              color: _color.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
-                                  color: _color.withValues(alpha: 0.2)),
+                                  color: _color.withOpacity(0.2)),
                             ),
                             child: Text(
                               _priorityLabel,

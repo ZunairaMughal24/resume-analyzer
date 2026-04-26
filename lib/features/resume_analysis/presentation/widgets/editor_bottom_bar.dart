@@ -16,10 +16,10 @@ class EditorBottomBar extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(
               16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
           decoration: BoxDecoration(
-            color: AppColors.surface.withValues(alpha: 0.95),
+            color: AppColors.surface.withOpacity(0.95),
             border: Border(
                 top:
-                    BorderSide(color: AppColors.border.withValues(alpha: 0.5))),
+                    BorderSide(color: AppColors.border.withOpacity(0.5))),
           ),
           child: Row(children: [
             // Polish with AI button
@@ -43,7 +43,7 @@ class EditorBottomBar extends StatelessWidget {
                     boxShadow: state.hasSelections
                         ? [
                             BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.3),
+                                color: AppColors.primary.withOpacity(0.3),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4))
                           ]
