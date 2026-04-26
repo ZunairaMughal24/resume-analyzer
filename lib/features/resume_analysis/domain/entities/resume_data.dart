@@ -336,11 +336,13 @@ class EducationEntry extends Equatable {
 class ProjectEntry extends Equatable {
   final String name;
   final String description;
+  final String link;
   final List<String> bullets;
 
   const ProjectEntry({
     required this.name,
     this.description = '',
+    this.link = '',
     this.bullets = const [],
   });
 
@@ -348,6 +350,7 @@ class ProjectEntry extends Equatable {
     return ProjectEntry(
       name: json['name'] as String? ?? '',
       description: json['description'] as String? ?? '',
+      link: json['link'] as String? ?? '',
       bullets: List<String>.from(json['bullets'] ?? []),
     );
   }
@@ -355,21 +358,24 @@ class ProjectEntry extends Equatable {
   Map<String, dynamic> toJson() => {
         'name': name,
         'description': description,
+        'link': link,
         'bullets': bullets,
       };
 
   ProjectEntry copyWith({
     String? name,
     String? description,
+    String? link,
     List<String>? bullets,
   }) {
     return ProjectEntry(
       name: name ?? this.name,
       description: description ?? this.description,
+      link: link ?? this.link,
       bullets: bullets ?? this.bullets,
     );
   }
 
   @override
-  List<Object?> get props => [name, description, bullets];
+  List<Object?> get props => [name, description, link, bullets];
 }
