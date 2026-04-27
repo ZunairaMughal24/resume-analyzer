@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:resume_analyzer/features/resume_analysis/presentation/bloc/resume_bloc.dart';
-import 'package:resume_analyzer/features/resume_analysis/presentation/pages/home_page.dart';
+import 'package:resume_analyzer/features/ai_assistant/presentation/bloc/resume_bloc.dart';
+import 'package:resume_analyzer/features/home/presentation/pages/home_page.dart';
 import 'core/di/injection.dart';
 import 'core/theme/app_theme.dart';
 

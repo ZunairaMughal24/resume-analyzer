@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resume_analyzer/core/theme/app_theme.dart';
+import 'package:resume_analyzer/features/ai_assistant/presentation/bloc/resume_bloc.dart';
+import 'package:resume_analyzer/features/home/presentation/pages/home_page.dart';
 import 'package:resume_analyzer/features/resume_analysis/data/datasources/ai_datasource.dart';
 import 'package:resume_analyzer/features/resume_analysis/data/repositories/resume_repository_impl.dart';
-import 'package:resume_analyzer/features/resume_analysis/domain/usecases/analyze_resume_usecase.dart';
-import 'package:resume_analyzer/features/resume_analysis/presentation/bloc/resume_bloc.dart';
-import 'package:resume_analyzer/features/resume_analysis/presentation/pages/home_page.dart';
+import 'package:resume_analyzer/features/resume_parser/domain/usecases/analyze_resume_usecase.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
