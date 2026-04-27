@@ -107,17 +107,22 @@ class ResultsPage extends StatelessWidget {
                         .animate()
                         .fadeIn(delay: 680.ms)
                         .slideY(begin: 0.1),
-                    const SizedBox(height: 32),
-                    _buildActionButtons(context)
-                        .animate()
-                        .fadeIn(delay: 760.ms)
-                        .slideY(begin: 0.2),
                   ],
                 ),
               ),
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(
+            16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
+        decoration: BoxDecoration(
+          color: AppColors.surface.withOpacity(0.97),
+          border:
+              Border(top: BorderSide(color: AppColors.border.withOpacity(0.5))),
+        ),
+        child: _buildActionButtons(context),
       ),
     );
   }

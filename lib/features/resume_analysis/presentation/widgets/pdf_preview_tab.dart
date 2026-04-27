@@ -29,8 +29,6 @@ class _PdfPreviewTabState extends State<PdfPreviewTab> {
     });
   }
 
-  //PDF generation
-
   Future<void> _regenerate() async {
     if (!mounted) return;
 
@@ -93,11 +91,87 @@ class _PdfPreviewTabState extends State<PdfPreviewTab> {
         resumeText: state.currentResumeText,
       );
       if (mounted && file != null) {
-        _snack('PDF saved successfully ✓', isError: false);
+        _snack('PDF saved to Downloads ✓', isError: false);
       }
     } catch (e) {
       if (mounted) _snack('Failed to save: $e', isError: true);
     }
+  }
+
+  Future<void> _saveTxt(EditorState state) async {
+    try {
+      final file = await ResumeExporter.exportAsTxt(
+        state.fileName,
+        data: state.resumeData,
+        resumeText: state.currentResumeText,
+      );
+      if (mounted && file != null) {
+        _snack('TXT saved to Downloads ✓', isError: false);
+      }
+    } catch (e) {
+      if (mounted) _snack('Failed to save: $e', isError: true);
+    }
+  }
+
+  void _showSaveOptions(BuildContext context, EditorState state) {
+    final controller = TextEditingController(text: state.fileName);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surfaceElevated,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (bottomSheetContext) => Padding(
+        padding: EdgeInsets.fromLTRB(20, 20, 20,
+            MediaQuery.of(bottomSheetContext).viewInsets.bottom + 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('Save Document',
+                style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'File Name',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (val) {
+                context.read<EditorBloc>().add(RenameResume(val));
+              },
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.picture_as_pdf_rounded),
+              label: const Text('Save as PDF'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              onPressed: () {
+                Navigator.pop(bottomSheetContext);
+                _savePdf(state);
+              },
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.text_snippet_rounded),
+              label: const Text('Save as Text (.txt)'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              onPressed: () {
+                Navigator.pop(bottomSheetContext);
+                _saveTxt(state);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _sharePdf(EditorState state) async {
@@ -143,7 +217,7 @@ class _PdfPreviewTabState extends State<PdfPreviewTab> {
               _FontSizeControl(state: state),
               _PreviewActionBar(
                 hasResume: state.resumeData != null,
-                onSave: () => _savePdf(state),
+                onSave: () => _showSaveOptions(context, state),
                 onShare: () => _sharePdf(state),
               ),
             ],

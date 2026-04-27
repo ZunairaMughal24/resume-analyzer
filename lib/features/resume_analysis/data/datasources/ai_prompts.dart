@@ -50,7 +50,10 @@ class AiPrompts {
         : '';
 
     final magicBlock = isMagicPolish
-        ? '\n\nMAGIC POLISH ENABLED:\nProactively improve grammar, rewrite bullet points to be stronger and more impactful, and ensure professional phrasing throughout the entire resume.'
+        ? '''\n\nMAGIC POLISH ENABLED - CRITICAL INSTRUCTION:
+You MUST proactively rewrite and enhance ALL existing descriptions, bullet points, and summaries. 
+Make them sound significantly more professional, clear, and impactful.
+Do not just copy the input text. Elevate the language, fix grammar, and use strong action verbs for every single item.'''
         : '';
 
     return '''You are an expert professional resume writer and ATS optimizer.

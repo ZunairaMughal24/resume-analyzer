@@ -23,7 +23,25 @@ class ResumeExporter {
         baseFontSize: baseFontSize);
   }
 
-  // ─── File export
+  static Future<String?> _getDownloadPath() async {
+    try {
+      if (Platform.isIOS) {
+        final dir = await getApplicationDocumentsDirectory();
+        return dir.path;
+      } else {
+        // Try standard Android Downloads folder
+        final dir = Directory('/storage/emulated/0/Download');
+        if (await dir.exists()) return dir.path;
+
+        final extDir = await getExternalStorageDirectory();
+        return extDir?.path;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // File export
   static Future<File?> exportAsPdf(String fileName,
       {ResumeData? data, String? resumeText}) async {
     final Uint8List bytes;
@@ -34,18 +52,18 @@ class ResumeExporter {
     }
 
     final sanitizedName = fileName.replaceAll(RegExp(r'[^\w\s-]'), '');
-    final String? savePath = await FilePicker.saveFile(
-      dialogTitle: 'Save Resume as PDF',
-      fileName: '$sanitizedName.pdf',
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-    );
+    final path = await _getDownloadPath();
+    if (path == null) {
+      // Fallback to share if we can't get a save path
+      final file =
+          await generateTempPdf(fileName, data: data, resumeText: resumeText);
+      await shareFile(file);
+      return file;
+    }
 
-    if (savePath == null) return null;
-
-    final file = File(savePath);
+    final file = File('$path/$sanitizedName.pdf');
     await file.writeAsBytes(bytes);
-    if (kDebugMode) print('📄 PDF saved to: ${file.path}');
+    if (kDebugMode) print('📄 PDF saved directly to: ${file.path}');
     return file;
   }
 
@@ -70,18 +88,16 @@ class ResumeExporter {
     final text = data?.toPlainText() ?? resumeText ?? '';
 
     final sanitizedName = fileName.replaceAll(RegExp(r'[^\w\s-]'), '');
-    final String? savePath = await FilePicker.saveFile(
-      dialogTitle: 'Save Resume as TXT',
-      fileName: '$sanitizedName.txt',
-      type: FileType.custom,
-      allowedExtensions: ['txt'],
-    );
+    final path = await _getDownloadPath();
+    if (path == null) {
+      // Fallback to share
+      await shareText(text);
+      return null;
+    }
 
-    if (savePath == null) return null;
-
-    final file = File(savePath);
+    final file = File('$path/$sanitizedName.txt');
     await file.writeAsString(text);
-    if (kDebugMode) print('📝 TXT saved to: ${file.path}');
+    if (kDebugMode) print('📝 TXT saved directly to: ${file.path}');
     return file;
   }
 

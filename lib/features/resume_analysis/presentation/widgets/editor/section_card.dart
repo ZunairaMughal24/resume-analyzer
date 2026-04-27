@@ -5,12 +5,14 @@ class SectionCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final List<Widget> children;
+  final Widget? action;
 
   const SectionCard({
     super.key,
     required this.icon,
     required this.title,
     required this.children,
+    this.action,
   });
 
   @override
@@ -49,6 +51,8 @@ class SectionCard extends StatelessWidget {
                         fontSize: 13,
                       ),
                 ),
+                if (action != null) const Spacer(),
+                if (action != null) action!,
               ],
             ),
           ),

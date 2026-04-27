@@ -227,144 +227,191 @@ class _SectionEditor extends StatelessWidget {
         ),
 
         // Summary
-        if (data.summary.isNotEmpty)
-          SectionCard(
-            icon: Icons.notes_rounded,
-            title: 'Summary',
-            children: [
-              EditableField(
-                label: 'Professional Summary',
-                value: data.summary,
-                maxLines: 5,
-                onSaved: (v) => _update(context, data.copyWith(summary: v)),
-              ),
-            ],
-          ),
+        SectionCard(
+          icon: Icons.notes_rounded,
+          title: 'Summary',
+          children: [
+            EditableField(
+              label: 'Professional Summary',
+              value: data.summary,
+              maxLines: 5,
+              onSaved: (v) => _update(context, data.copyWith(summary: v)),
+            ),
+          ],
+        ),
 
         // Experience
-        if (data.experience.isNotEmpty)
-          SectionCard(
-            icon: Icons.work_rounded,
-            title: 'Experience',
-            children: data.experience.asMap().entries.map((entry) {
-              final i = entry.key;
-              return ExperienceEditor(
-                exp: entry.value,
-                index: i,
-                total: data.experience.length,
-                onSaved: (updated) {
-                  final list = List<ExperienceEntry>.from(data.experience);
-                  list[i] = updated;
-                  _update(context, data.copyWith(experience: list));
-                },
-              );
-            }).toList(),
+        SectionCard(
+          icon: Icons.work_rounded,
+          title: 'Experience',
+          action: IconButton(
+            icon: const Icon(Icons.add_circle_outline_rounded, size: 20),
+            color: AppColors.primary,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            onPressed: () {
+              final list = List<ExperienceEntry>.from(data.experience);
+              list.insert(0, const ExperienceEntry(
+                  title: '', company: '', dates: '', location: '', bullets: []));
+              _update(context, data.copyWith(experience: list));
+            },
           ),
+          children: data.experience.isEmpty
+              ? [const Padding(padding: EdgeInsets.all(8.0), child: Text('Tap + to add an experience.'))]
+              : data.experience.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  return ExperienceEditor(
+                    exp: entry.value,
+                    index: i,
+                    total: data.experience.length,
+                    onSaved: (updated) {
+                      final list = List<ExperienceEntry>.from(data.experience);
+                      if (updated.title == '__DELETE__') {
+                        list.removeAt(i);
+                      } else {
+                        list[i] = updated;
+                      }
+                      _update(context, data.copyWith(experience: list));
+                    },
+                  );
+                }).toList(),
+        ),
 
         // Education
-        if (data.education.isNotEmpty)
-          SectionCard(
-            icon: Icons.school_rounded,
-            title: 'Education',
-            children: data.education.asMap().entries.map((entry) {
-              final i = entry.key;
-              return EducationEditor(
-                edu: entry.value,
-                index: i,
-                total: data.education.length,
-                onSaved: (updated) {
-                  final list = List<EducationEntry>.from(data.education);
-                  list[i] = updated;
-                  _update(context, data.copyWith(education: list));
-                },
-              );
-            }).toList(),
+        SectionCard(
+          icon: Icons.school_rounded,
+          title: 'Education',
+          action: IconButton(
+            icon: const Icon(Icons.add_circle_outline_rounded, size: 20),
+            color: AppColors.primary,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            onPressed: () {
+              final list = List<EducationEntry>.from(data.education);
+              list.insert(0, const EducationEntry(
+                  degree: '', institution: '', dates: '', details: ''));
+              _update(context, data.copyWith(education: list));
+            },
           ),
+          children: data.education.isEmpty
+              ? [const Padding(padding: EdgeInsets.all(8.0), child: Text('Tap + to add education.'))]
+              : data.education.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  return EducationEditor(
+                    edu: entry.value,
+                    index: i,
+                    total: data.education.length,
+                    onSaved: (updated) {
+                      final list = List<EducationEntry>.from(data.education);
+                      if (updated.degree == '__DELETE__') {
+                        list.removeAt(i);
+                      } else {
+                        list[i] = updated;
+                      }
+                      _update(context, data.copyWith(education: list));
+                    },
+                  );
+                }).toList(),
+        ),
 
         // Skills
-        if (data.skills.isNotEmpty)
-          SectionCard(
-            icon: Icons.psychology_rounded,
-            title: 'Skills',
-            children: [
-              EditableField(
-                label: 'Skills (comma-separated)',
-                value: data.skills.join(', '),
-                maxLines: 3,
-                onSaved: (v) {
-                  final skills = v
-                      .split(',')
-                      .map((s) => s.trim())
-                      .where((s) => s.isNotEmpty)
-                      .toList();
-                  _update(context, data.copyWith(skills: skills));
-                },
-              ),
-            ],
-          ),
+        SectionCard(
+          icon: Icons.psychology_rounded,
+          title: 'Skills',
+          children: [
+            EditableField(
+              label: 'Skills (comma-separated)',
+              value: data.skills.join(', '),
+              maxLines: 3,
+              onSaved: (v) {
+                final skills = v
+                    .split(',')
+                    .map((s) => s.trim())
+                    .where((s) => s.isNotEmpty)
+                    .toList();
+                _update(context, data.copyWith(skills: skills));
+              },
+            ),
+          ],
+        ),
 
         // Projects
-        if (data.projects.isNotEmpty)
-          SectionCard(
-            icon: Icons.rocket_launch_rounded,
-            title: 'Projects',
-            children: data.projects.asMap().entries.map((entry) {
-              final i = entry.key;
-              return ProjectEditor(
-                proj: entry.value,
-                index: i,
-                total: data.projects.length,
-                onSaved: (updated) {
-                  final list = List<ProjectEntry>.from(data.projects);
-                  list[i] = updated;
-                  _update(context, data.copyWith(projects: list));
-                },
-              );
-            }).toList(),
+        SectionCard(
+          icon: Icons.rocket_launch_rounded,
+          title: 'Projects',
+          action: IconButton(
+            icon: const Icon(Icons.add_circle_outline_rounded, size: 20),
+            color: AppColors.primary,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            onPressed: () {
+              final list = List<ProjectEntry>.from(data.projects);
+              list.insert(0, const ProjectEntry(
+                  name: '', description: '', link: '', bullets: []));
+              _update(context, data.copyWith(projects: list));
+            },
           ),
+          children: data.projects.isEmpty
+              ? [const Padding(padding: EdgeInsets.all(8.0), child: Text('Tap + to add a project.'))]
+              : data.projects.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  return ProjectEditor(
+                    proj: entry.value,
+                    index: i,
+                    total: data.projects.length,
+                    onSaved: (updated) {
+                      final list = List<ProjectEntry>.from(data.projects);
+                      if (updated.name == '__DELETE__') {
+                        list.removeAt(i);
+                      } else {
+                        list[i] = updated;
+                      }
+                      _update(context, data.copyWith(projects: list));
+                    },
+                  );
+                }).toList(),
+        ),
 
         // Certifications
-        if (data.certifications.isNotEmpty)
-          SectionCard(
-            icon: Icons.verified_rounded,
-            title: 'Certifications',
-            children: [
-              EditableField(
-                label: 'Certifications (one per line)',
-                value: data.certifications.join('\n'),
-                maxLines: 4,
-                onSaved: (v) {
-                  final certs = v
-                      .split('\n')
-                      .map((s) => s.trim())
-                      .where((s) => s.isNotEmpty)
-                      .toList();
-                  _update(context, data.copyWith(certifications: certs));
-                },
-              ),
-            ],
-          ),
+        SectionCard(
+          icon: Icons.verified_rounded,
+          title: 'Certifications',
+          children: [
+            EditableField(
+              label: 'Certifications (one per line)',
+              value: data.certifications.join('\n'),
+              maxLines: 4,
+              onSaved: (v) {
+                final certs = v
+                    .split('\n')
+                    .map((s) => s.trim())
+                    .where((s) => s.isNotEmpty)
+                    .toList();
+                _update(context, data.copyWith(certifications: certs));
+              },
+            ),
+          ],
+        ),
 
         // Languages
-        if (data.languages.isNotEmpty)
-          SectionCard(
-            icon: Icons.language_rounded,
-            title: 'Languages',
-            children: [
-              EditableField(
-                label: 'Languages (comma-separated)',
-                value: data.languages.join(', '),
-                onSaved: (v) {
-                  final langs = v
-                      .split(',')
-                      .map((s) => s.trim())
-                      .where((s) => s.isNotEmpty)
-                      .toList();
-                  _update(context, data.copyWith(languages: langs));
-                },
-              ),
-            ],
-          ),
+        SectionCard(
+          icon: Icons.language_rounded,
+          title: 'Languages',
+          children: [
+            EditableField(
+              label: 'Languages (comma-separated)',
+              value: data.languages.join(', '),
+              onSaved: (v) {
+                final langs = v
+                    .split(',')
+                    .map((s) => s.trim())
+                    .where((s) => s.isNotEmpty)
+                    .toList();
+                _update(context, data.copyWith(languages: langs));
+              },
+            ),
+          ],
+        ),
 
         const SizedBox(height: 16),
       ],
@@ -400,7 +447,12 @@ class _EditorActionBar extends StatelessWidget {
         Expanded(
           flex: 3,
           child: GestureDetector(
-            onTap: isPolishing ? null : onRefine,
+            onTap: isPolishing
+                ? null
+                : () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    Future.delayed(const Duration(milliseconds: 100), onRefine);
+                  },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 250),
               height: 50,
@@ -450,7 +502,10 @@ class _EditorActionBar extends StatelessWidget {
         Expanded(
           flex: 2,
           child: GestureDetector(
-            onTap: onSaveChanges,
+            onTap: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+              Future.delayed(const Duration(milliseconds: 100), onSaveChanges);
+            },
             child: Container(
               height: 50,
               decoration: BoxDecoration(
