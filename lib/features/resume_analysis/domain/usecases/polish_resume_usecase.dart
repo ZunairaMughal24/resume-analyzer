@@ -12,11 +12,13 @@ class PolishResumeUseCase {
     String resumeText, {
     required List<String> acceptedSuggestions,
     required List<String> acceptedKeywords,
+    bool isMagicPolish = false,
   }) {
     return repository.polishResume(
       resumeText,
       acceptedSuggestions: acceptedSuggestions,
       acceptedKeywords: acceptedKeywords,
+      isMagicPolish: isMagicPolish,
     );
   }
 }

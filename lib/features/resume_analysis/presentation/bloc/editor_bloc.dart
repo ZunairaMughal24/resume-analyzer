@@ -19,6 +19,7 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
     on<UpdateResumeText>(_onUpdateResumeText);
     on<UpdatePdfFontSize>(_onUpdatePdfFontSize);
     on<PolishWithAI>(_onPolish);
+    on<ParseResumeForEditing>(_onParseForEditing);
     on<RenameResume>(_onRename);
     on<UndoEdit>(_onUndo);
   }
@@ -103,8 +104,6 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
   }
 
   Future<void> _onPolish(PolishWithAI event, Emitter<EditorState> emit) async {
-    if (!state.hasSelections) return;
-
     emit(state.copyWith(status: EditorStatus.polishing));
 
     final acceptedSuggestions = state.suggestions
@@ -118,9 +117,10 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
         .toList();
 
     final result = await polishUseCase(
-      state.originalResumeText,
+      state.currentResumeText,
       acceptedSuggestions: acceptedSuggestions,
       acceptedKeywords: acceptedKeywords,
+      isMagicPolish: true,
     );
 
     result.fold(
@@ -133,6 +133,30 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
           resumeData: polishedData,
           status: EditorStatus.loaded,
         )));
+      },
+    );
+  }
+
+  Future<void> _onParseForEditing(
+      ParseResumeForEditing event, Emitter<EditorState> emit) async {
+    emit(state.copyWith(status: EditorStatus.parsing));
+
+    final result = await polishUseCase(
+      state.originalResumeText,
+      acceptedSuggestions: const [], // no changes — pure extraction
+      acceptedKeywords: const [],
+    );
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        status: EditorStatus.error,
+        errorMessage: failure.message,
+      )),
+      (parsedData) {
+        emit(state.copyWith(
+          resumeData: parsedData,
+          status: EditorStatus.loaded,
+        ));
       },
     );
   }

@@ -35,7 +35,7 @@ class SelectableKeyword {
   }
 }
 
-enum EditorStatus { initial, loaded, polishing, error }
+enum EditorStatus { initial, loaded, parsing, polishing, error }
 
 class EditorState extends Equatable {
   final String originalResumeText;
@@ -62,7 +62,7 @@ class EditorState extends Equatable {
     this.errorMessage,
   });
 
-  //Convenience: current resume as plain text for AI input and legacy text export.
+  //Convenience: current resume as plain text for AI input
   String get currentResumeText =>
       resumeData?.toPlainText() ?? originalResumeText;
 

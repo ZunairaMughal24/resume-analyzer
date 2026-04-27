@@ -17,24 +17,58 @@ import 'resume_editor_page.dart';
 class ResultsPage extends StatelessWidget {
   final ResumeAnalysis analysis;
   final String resumeText;
-  const ResultsPage({super.key, required this.analysis, required this.resumeText});
+
+  const ResultsPage({
+    super.key,
+    required this.analysis,
+    required this.resumeText,
+  });
+
+  void _openEnhance(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ResumeEditorPage(
+          resumeText: resumeText,
+          fileName: 'My Resume',
+          analysis: analysis,
+          startTab: EditorStartTab.suggestions,
+        ),
+      ),
+    );
+  }
+
+  void _openEdit(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ResumeEditorPage(
+          resumeText: resumeText,
+          fileName: 'My Resume',
+          analysis: analysis,
+          startTab: EditorStartTab.editor,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      floatingActionButton: _buildEditFab(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: AppBackground(
         child: CustomScrollView(
           slivers: [
             _buildAppBar(context),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 20, 14, 80),
+                padding: const EdgeInsets.fromLTRB(14, 20, 14, 32),
                 child: Column(
                   children: [
-                    ScoreHeroCard(analysis: analysis).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
+                    ScoreHeroCard(analysis: analysis)
+                        .animate()
+                        .fadeIn(delay: 100.ms)
+                        .slideY(begin: 0.1),
                     const SizedBox(height: 20),
                     Row(
                       children: [
@@ -44,17 +78,40 @@ class ResultsPage extends StatelessWidget {
                       ],
                     ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
                     const SizedBox(height: 20),
-                    AnalysisSummaryCard(analysis: analysis).animate().fadeIn(delay: 280.ms).slideY(begin: 0.1),
+                    AnalysisSummaryCard(analysis: analysis)
+                        .animate()
+                        .fadeIn(delay: 280.ms)
+                        .slideY(begin: 0.1),
                     const SizedBox(height: 20),
-                    SectionBreakdownCard(analysis: analysis).animate().fadeIn(delay: 360.ms).slideY(begin: 0.1),
+                    SectionBreakdownCard(analysis: analysis)
+                        .animate()
+                        .fadeIn(delay: 360.ms)
+                        .slideY(begin: 0.1),
                     const SizedBox(height: 20),
-                    StrengthsWeaknessesCard(analysis: analysis).animate().fadeIn(delay: 440.ms).slideY(begin: 0.1),
+                    StrengthsWeaknessesCard(analysis: analysis)
+                        .animate()
+                        .fadeIn(delay: 440.ms)
+                        .slideY(begin: 0.1),
                     const SizedBox(height: 20),
-                    SuggestionsCard(analysis: analysis).animate().fadeIn(delay: 520.ms).slideY(begin: 0.1),
+                    SuggestionsCard(analysis: analysis)
+                        .animate()
+                        .fadeIn(delay: 520.ms)
+                        .slideY(begin: 0.1),
                     const SizedBox(height: 20),
-                    SkillsCard(analysis: analysis).animate().fadeIn(delay: 600.ms).slideY(begin: 0.1),
+                    SkillsCard(analysis: analysis)
+                        .animate()
+                        .fadeIn(delay: 600.ms)
+                        .slideY(begin: 0.1),
                     const SizedBox(height: 20),
-                    KeywordsCard(analysis: analysis).animate().fadeIn(delay: 680.ms).slideY(begin: 0.1),
+                    KeywordsCard(analysis: analysis)
+                        .animate()
+                        .fadeIn(delay: 680.ms)
+                        .slideY(begin: 0.1),
+                    const SizedBox(height: 32),
+                    _buildActionButtons(context)
+                        .animate()
+                        .fadeIn(delay: 760.ms)
+                        .slideY(begin: 0.2),
                   ],
                 ),
               ),
@@ -65,43 +122,32 @@ class ResultsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEditFab(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ResumeEditorPage(
-            resumeText: resumeText,
-            fileName: 'My Resume',
-            analysis: analysis,
+  Widget _buildActionButtons(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: _ResultsButton(
+            id: 'btn_enhance_with_ai',
+            label: 'Enhance with AI',
+            icon: Icons.auto_awesome_rounded,
+            isPrimary: true,
+            onTap: () => _openEnhance(context),
           ),
         ),
-      ),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryDark]),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 6)),
-          ],
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 2,
+          child: _ResultsButton(
+            id: 'btn_edit_resume',
+            label: 'Edit Resume',
+            icon: Icons.edit_rounded,
+            isPrimary: false,
+            onTap: () => _openEdit(context),
+          ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.auto_fix_high_rounded, color: Colors.white, size: 20),
-            const SizedBox(width: 10),
-            Text(
-              'Edit & Polish Resume',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ).animate().fadeIn(delay: 800.ms).slideY(begin: 0.3);
+      ],
+    );
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -110,17 +156,22 @@ class ResultsPage extends StatelessWidget {
       backgroundColor: AppColors.background,
       leading: IconButton(
         icon: Container(
-          width: 36, height: 36,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
                 colors: [AppColors.primary, AppColors.primaryDark]),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: const Icon(Icons.arrow_back_ios_new_rounded, size: 15, color: Colors.white),
+          child: const Icon(Icons.arrow_back_ios_new_rounded,
+              size: 15, color: Colors.white),
         ),
         onPressed: () => Navigator.pop(context),
       ),
-      title: Text('Analysis Results', style: Theme.of(context).textTheme.titleLarge),
+      title: Text(
+        'Analysis Results',
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16),
@@ -133,13 +184,78 @@ class ResultsPage extends StatelessWidget {
             ),
             child: Text(
               analysis.industry,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColors.primary, fontSize: 11,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelLarge
+                  ?.copyWith(color: AppColors.primary, fontSize: 11),
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ResultsButton extends StatelessWidget {
+  final String id;
+  final String label;
+  final IconData icon;
+  final bool isPrimary;
+  final VoidCallback onTap;
+
+  const _ResultsButton({
+    required this.id,
+    required this.label,
+    required this.icon,
+    required this.isPrimary,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      key: ValueKey(id),
+      onTap: onTap,
+      child: Container(
+        height: 52,
+        decoration: BoxDecoration(
+          gradient: isPrimary
+              ? const LinearGradient(
+                  colors: [AppColors.primary, AppColors.primaryDark])
+              : null,
+          color: isPrimary ? null : AppColors.surfaceElevated,
+          borderRadius: BorderRadius.circular(16),
+          border: isPrimary ? null : Border.all(color: AppColors.border),
+          boxShadow: isPrimary
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  )
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: isPrimary ? Colors.white : AppColors.textPrimary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: isPrimary ? Colors.white : AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

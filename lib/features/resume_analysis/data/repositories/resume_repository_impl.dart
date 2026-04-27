@@ -28,12 +28,14 @@ class ResumeRepositoryImpl implements ResumeRepository {
     String resumeText, {
     required List<String> acceptedSuggestions,
     required List<String> acceptedKeywords,
+    bool isMagicPolish = false,
   }) async {
     try {
       final json = await datasource.polishResume(
         resumeText,
         acceptedSuggestions: acceptedSuggestions,
         acceptedKeywords: acceptedKeywords,
+        isMagicPolish: isMagicPolish,
       );
       return Right(ResumeData.fromJson(json));
     } catch (e) {

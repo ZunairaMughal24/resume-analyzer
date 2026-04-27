@@ -38,8 +38,9 @@ class AiPrompts {
   static String generatePolishPrompt(
     String resumeText,
     List<String> acceptedSuggestions,
-    List<String> acceptedKeywords,
-  ) {
+    List<String> acceptedKeywords, {
+    bool isMagicPolish = false,
+  }) {
     final suggestionsBlock = acceptedSuggestions.isNotEmpty
         ? '\n\nAPPROVED IMPROVEMENTS TO APPLY:\n${acceptedSuggestions.map((s) => '• $s').join('\n')}'
         : '';
@@ -48,18 +49,23 @@ class AiPrompts {
         ? '\n\nMISSING KEYWORDS TO NATURALLY INCORPORATE:\n${acceptedKeywords.map((k) => '• $k').join('\n')}'
         : '';
 
+    final magicBlock = isMagicPolish
+        ? '\n\nMAGIC POLISH ENABLED:\nProactively improve grammar, rewrite bullet points to be stronger and more impactful, and ensure professional phrasing throughout the entire resume.'
+        : '';
+
     return '''You are an expert professional resume writer and ATS optimizer.
 
 TASK: Extract and restructure all resume content from the raw text below, then apply the approved improvements. Return ONLY a valid JSON object — no markdown, no explanation.
 
 CRITICAL RULES:
 1. The input text was PDF-extracted and may be scattered. Parse it intelligently.
-2. Do NOT invent information not present in the original or approved improvements.
+2. ${isMagicPolish ? 'You have creative freedom to rewrite and improve the text for maximum professional impact.' : 'Do NOT invent information not present in the original or approved improvements.'}
 3. Naturally incorporate the approved keywords where they fit contextually.
 4. Write bullet points as strong, action-verb-led achievement statements.
 5. Keep a professional, high-impact tone.
 $suggestionsBlock
 $keywordsBlock
+$magicBlock
 
 Return this EXACT JSON structure:
 {

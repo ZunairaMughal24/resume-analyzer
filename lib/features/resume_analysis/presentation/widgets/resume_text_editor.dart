@@ -9,29 +9,47 @@ import 'editor/experience_editor.dart';
 import 'editor/education_editor.dart';
 import 'editor/project_editor.dart';
 
-class ResumeTextEditor extends StatefulWidget {
-  const ResumeTextEditor({super.key});
+class ResumeTextEditor extends StatelessWidget {
+  final VoidCallback onPreviewTap;
 
-  @override
-  State<ResumeTextEditor> createState() => _ResumeTextEditorState();
-}
+  const ResumeTextEditor({super.key, required this.onPreviewTap});
 
-class _ResumeTextEditorState extends State<ResumeTextEditor> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EditorBloc, EditorState>(
       builder: (context, state) {
-        if (state.resumeData == null) {
-          return _buildEmptyState(context);
-        }
-        return _buildEditor(context, state.resumeData!);
+        return Column(
+          children: [
+            // ── Main content
+            Expanded(
+              child: switch (state.status) {
+                EditorStatus.parsing => _ParsingLoader(),
+                _ => state.resumeData == null
+                    ? _EmptyState()
+                    : _SectionEditor(resumeData: state.resumeData!),
+              },
+            ),
+
+            //bottom action bar
+            if (state.resumeData != null)
+              _EditorActionBar(
+                isPolishing: state.status == EditorStatus.polishing,
+                hasSelections: state.hasSelections,
+                onRefine: () => context.read<EditorBloc>().add(PolishWithAI()),
+                onSaveChanges: onPreviewTap,
+              ),
+          ],
+        );
       },
     );
   }
+}
 
-  // Empty state (before polish)
+// Empty state — shown before any AI polish has been run.
 
-  Widget _buildEmptyState(BuildContext context) {
+class _EmptyState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -49,12 +67,12 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Icon(Icons.auto_awesome_rounded,
+              child: const Icon(Icons.edit_note_rounded,
                   color: Colors.white, size: 36),
             ),
             const SizedBox(height: 20),
             Text(
-              'No structured resume yet',
+              'Nothing to edit yet',
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
@@ -63,67 +81,93 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Go to the Suggestions tab, select improvements to apply, then tap "Polish with AI".\n\nThe AI will parse your resume into editable sections.',
+              'Go to the Suggestions tab, choose the improvements\nyou want, and tap "Apply Suggestions".\n\nYour resume will appear here ready for manual edits.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.textMuted,
                     height: 1.6,
                   ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            GestureDetector(
-              onTap: () {
-                context.read<EditorBloc>()
-                  ..add(const BulkUpdateSelection(isAccepted: true, type: SelectionType.all))
-                  ..add(PolishWithAI());
-              },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.primaryDark],
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.35),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Parsing loader — shown while AI extracts data from raw resume text.
+
+class _ParsingLoader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppColors.primary, AppColors.primaryDark],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.auto_awesome_rounded,
-                        color: Colors.white, size: 18),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Polish with AI',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15,
-                          ),
-                    ),
-                  ],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(18),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
                 ),
               ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Extracting Resume Data…',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'AI is reading your resume and populating\nthe editor fields. This takes a few seconds.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.textMuted,
+                    height: 1.6,
+                  ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
     );
   }
+}
 
-  // Section-based editor
+// Section-based structured editor
 
-  Widget _buildEditor(BuildContext context, ResumeData data) {
+class _SectionEditor extends StatelessWidget {
+  final ResumeData resumeData;
+  const _SectionEditor({required this.resumeData});
+
+  void _update(BuildContext context, ResumeData updated) {
+    context.read<EditorBloc>().add(UpdateResumeData(updated));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final data = resumeData;
+
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       children: [
-        // Header info
+        // Personal Info
         SectionCard(
           icon: Icons.person_rounded,
           title: 'Personal Info',
@@ -135,6 +179,8 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
             ),
           ],
         ),
+
+        // Contact
         SectionCard(
           icon: Icons.contact_mail_rounded,
           title: 'Contact',
@@ -143,54 +189,44 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
               label: 'Email',
               value: data.contact.email,
               keyboardType: TextInputType.emailAddress,
-              onSaved: (v) => _update(
-                context,
-                data.copyWith(contact: data.contact.copyWith(email: v)),
-              ),
+              onSaved: (v) => _update(context,
+                  data.copyWith(contact: data.contact.copyWith(email: v))),
             ),
             EditableField(
               label: 'Phone',
               value: data.contact.phone,
               keyboardType: TextInputType.phone,
-              onSaved: (v) => _update(
-                context,
-                data.copyWith(contact: data.contact.copyWith(phone: v)),
-              ),
+              onSaved: (v) => _update(context,
+                  data.copyWith(contact: data.contact.copyWith(phone: v))),
             ),
             EditableField(
               label: 'Location',
               value: data.contact.location,
-              onSaved: (v) => _update(
-                context,
-                data.copyWith(contact: data.contact.copyWith(location: v)),
-              ),
+              onSaved: (v) => _update(context,
+                  data.copyWith(contact: data.contact.copyWith(location: v))),
             ),
             EditableField(
               label: 'LinkedIn',
               value: data.contact.linkedin,
-              onSaved: (v) => _update(
-                context,
-                data.copyWith(contact: data.contact.copyWith(linkedin: v)),
-              ),
+              onSaved: (v) => _update(context,
+                  data.copyWith(contact: data.contact.copyWith(linkedin: v))),
             ),
             EditableField(
               label: 'GitHub',
               value: data.contact.github,
-              onSaved: (v) => _update(
-                context,
-                data.copyWith(contact: data.contact.copyWith(github: v)),
-              ),
+              onSaved: (v) => _update(context,
+                  data.copyWith(contact: data.contact.copyWith(github: v))),
             ),
             EditableField(
               label: 'Website',
               value: data.contact.website,
-              onSaved: (v) => _update(
-                context,
-                data.copyWith(contact: data.contact.copyWith(website: v)),
-              ),
+              onSaved: (v) => _update(context,
+                  data.copyWith(contact: data.contact.copyWith(website: v))),
             ),
           ],
         ),
+
+        // Summary
         if (data.summary.isNotEmpty)
           SectionCard(
             icon: Icons.notes_rounded,
@@ -204,15 +240,16 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
               ),
             ],
           ),
+
+        // Experience
         if (data.experience.isNotEmpty)
           SectionCard(
             icon: Icons.work_rounded,
             title: 'Experience',
             children: data.experience.asMap().entries.map((entry) {
               final i = entry.key;
-              final exp = entry.value;
               return ExperienceEditor(
-                exp: exp,
+                exp: entry.value,
                 index: i,
                 total: data.experience.length,
                 onSaved: (updated) {
@@ -223,15 +260,16 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
               );
             }).toList(),
           ),
+
+        // Education
         if (data.education.isNotEmpty)
           SectionCard(
             icon: Icons.school_rounded,
             title: 'Education',
             children: data.education.asMap().entries.map((entry) {
               final i = entry.key;
-              final edu = entry.value;
               return EducationEditor(
-                edu: edu,
+                edu: entry.value,
                 index: i,
                 total: data.education.length,
                 onSaved: (updated) {
@@ -242,6 +280,8 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
               );
             }).toList(),
           ),
+
+        // Skills
         if (data.skills.isNotEmpty)
           SectionCard(
             icon: Icons.psychology_rounded,
@@ -262,15 +302,16 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
               ),
             ],
           ),
+
+        // Projects
         if (data.projects.isNotEmpty)
           SectionCard(
             icon: Icons.rocket_launch_rounded,
             title: 'Projects',
             children: data.projects.asMap().entries.map((entry) {
               final i = entry.key;
-              final proj = entry.value;
               return ProjectEditor(
-                proj: proj,
+                proj: entry.value,
                 index: i,
                 total: data.projects.length,
                 onSaved: (updated) {
@@ -281,6 +322,8 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
               );
             }).toList(),
           ),
+
+        // Certifications
         if (data.certifications.isNotEmpty)
           SectionCard(
             icon: Icons.verified_rounded,
@@ -301,6 +344,8 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
               ),
             ],
           ),
+
+        // Languages
         if (data.languages.isNotEmpty)
           SectionCard(
             icon: Icons.language_rounded,
@@ -320,12 +365,117 @@ class _ResumeTextEditorState extends State<ResumeTextEditor> {
               ),
             ],
           ),
-        const SizedBox(height: 80),
+
+        const SizedBox(height: 16),
       ],
     );
   }
+}
 
-  void _update(BuildContext context, ResumeData updated) {
-    context.read<EditorBloc>().add(UpdateResumeData(updated));
+class _EditorActionBar extends StatelessWidget {
+  final bool isPolishing;
+  final bool hasSelections;
+  final VoidCallback onRefine;
+  final VoidCallback onSaveChanges;
+
+  const _EditorActionBar({
+    required this.isPolishing,
+    required this.hasSelections,
+    required this.onRefine,
+    required this.onSaveChanges,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+          16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
+      decoration: BoxDecoration(
+        color: AppColors.surface.withOpacity(0.97),
+        border:
+            Border(top: BorderSide(color: AppColors.border.withOpacity(0.5))),
+      ),
+      child: Row(children: [
+        // "Refine with AI" — re-runs polish with current suggestion selections
+        Expanded(
+          flex: 3,
+          child: GestureDetector(
+            onTap: isPolishing ? null : onRefine,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              height: 50,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                    colors: [AppColors.primary, AppColors.primaryDark]),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.28),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  )
+                ],
+              ),
+              child: Center(
+                child: isPolishing
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2.5, color: Colors.white))
+                    : Row(mainAxisSize: MainAxisSize.min, children: [
+                        const Icon(
+                          Icons.refresh_rounded,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Refine with AI',
+                          style:
+                              Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                  ),
+                        ),
+                      ]),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+
+        //Save Changes
+        Expanded(
+          flex: 2,
+          child: GestureDetector(
+            onTap: onSaveChanges,
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceElevated,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Center(
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Icon(Icons.check_rounded,
+                      size: 18, color: AppColors.textPrimary),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Save Changes',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                  ),
+                ]),
+              ),
+            ),
+          ),
+        ),
+      ]),
+    );
   }
 }

@@ -6,24 +6,23 @@ import 'ai_prompts.dart';
 import 'ai_mock_data.dart';
 
 class AiDatasource {
-  static final String _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+  static final String _apiKey = dotenv.env['API_KEY'] ?? '';
 
   Future<Map<String, dynamic>> analyzeResume(
     String resumeText, {
     String? jobDescription,
   }) async {
-    // Try models in order of confirmed success (2.5-flash works best)
+    // Try models in order of cost/performance on OpenRouter
     final List<String> modelsToTry = [
-      'gemini-2.5-flash',
-      'gemini-2.0-flash',
-      'gemini-flash-latest',
-      'gemini-1.5-flash',
+      'google/gemini-2.5-flash',
+      'anthropic/claude-3-haiku',
+      'openai/gpt-4o-mini',
+      'google/gemini-1.5-flash',
     ];
 
-    for (String modelName in modelsToTry) {
-      final String url =
-          'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent';
+    const String url = 'https://openrouter.ai/api/v1/chat/completions';
 
+    for (String modelName in modelsToTry) {
       try {
         if (kDebugMode) {
           print('🛰️ ATTEMPTING AI ANALYSIS WITH: $modelName...');
@@ -31,29 +30,32 @@ class AiDatasource {
 
         final response = await http
             .post(
-              Uri.parse('$url?key=$_apiKey'),
-              headers: {'Content-Type': 'application/json'},
+              Uri.parse(url),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $_apiKey',
+                // Optional OpenRouter headers
+                'HTTP-Referer': 'https://resume-analyzer.app',
+                'X-Title': 'Resume Analyzer',
+              },
               body: jsonEncode({
-                'contents': [
+                'model': modelName,
+                'messages': [
                   {
-                    'parts': [
-                      {'text': AiPrompts.generateAnalysisPrompt(resumeText, jobDescription)}
-                    ]
+                    'role': 'user',
+                    'content': AiPrompts.generateAnalysisPrompt(
+                        resumeText, jobDescription)
                   }
                 ],
-                'generationConfig': {
-                  'temperature': 0.1,
-                  'maxOutputTokens': 16384,
-                  'responseMimeType': 'application/json',
-                }
+                'temperature': 0.1,
+                'response_format': {'type': 'json_object'},
               }),
             )
             .timeout(const Duration(seconds: 90));
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
-          final String rawText =
-              data['candidates'][0]['content']['parts'][0]['text'];
+          final String rawText = data['choices'][0]['message']['content'];
           if (kDebugMode) print('✅ SUCCESS WITH $modelName!');
 
           // Try parsing, with truncation repair fallback
@@ -67,6 +69,7 @@ class AiDatasource {
         } else {
           if (kDebugMode) {
             print('❌ $modelName FAILED (${response.statusCode})');
+            print('Error details: ${response.body}');
           }
           continue;
         }
@@ -87,6 +90,14 @@ class AiDatasource {
     int openBrackets = 0;
     bool inString = false;
     bool isEscaped = false;
+
+    // Handle common case where AI wraps JSON in markdown block
+    if (repaired.startsWith('```json')) {
+      repaired = repaired.replaceFirst('```json', '').trim();
+    }
+    if (repaired.endsWith('```')) {
+      repaired = repaired.substring(0, repaired.length - 3).trim();
+    }
 
     for (int i = 0; i < repaired.length; i++) {
       String char = repaired[i];
@@ -117,35 +128,36 @@ class AiDatasource {
   Future<void> listAvailableModels() async {
     try {
       final response = await http.get(
-        Uri.parse(
-            'https://generativelanguage.googleapis.com/v1beta/models?key=$_apiKey'),
+        Uri.parse('https://openrouter.ai/api/v1/models'),
+        headers: {
+          'Authorization': 'Bearer $_apiKey',
+        },
       );
-      debugPrint('--- Model Discovery (v1beta) ---');
+      debugPrint('--- Model Discovery (OpenRouter) ---');
       debugPrint('Status: ${response.statusCode}');
-      debugPrint('Available Models: ${response.body}');
+      // OpenRouter models list is huge, might not want to print it all in prod
+      debugPrint('Available Models: ${response.body.substring(0, 500)}...');
     } catch (e) {
       debugPrint('Failed to list models: $e');
     }
   }
 
-  /// Sends resume text + accepted improvements to AI for polishing.
-  /// Returns structured JSON matching the ResumeData schema.
   Future<Map<String, dynamic>> polishResume(
     String resumeText, {
     required List<String> acceptedSuggestions,
     required List<String> acceptedKeywords,
+    bool isMagicPolish = false,
   }) async {
     final List<String> modelsToTry = [
-      'gemini-2.5-flash',
-      'gemini-2.0-flash',
-      'gemini-flash-latest',
-      'gemini-1.5-flash',
+      'google/gemini-2.5-flash',
+      'openai/gpt-4o-mini',
+      'anthropic/claude-3-haiku',
+      'google/gemini-1.5-flash',
     ];
 
-    for (String modelName in modelsToTry) {
-      final String url =
-          'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent';
+    const String url = 'https://openrouter.ai/api/v1/chat/completions';
 
+    for (String modelName in modelsToTry) {
       try {
         if (kDebugMode) {
           print('✨ ATTEMPTING AI POLISH WITH: $modelName...');
@@ -153,45 +165,50 @@ class AiDatasource {
 
         final response = await http
             .post(
-              Uri.parse('$url?key=$_apiKey'),
-              headers: {'Content-Type': 'application/json'},
+              Uri.parse(url),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $_apiKey',
+                'HTTP-Referer': 'https://resume-analyzer.app',
+                'X-Title': 'Resume Analyzer',
+              },
               body: jsonEncode({
-                'contents': [
+                'model': modelName,
+                'messages': [
                   {
-                    'parts': [
-                      {
-                        'text': AiPrompts.generatePolishPrompt(
-                            resumeText, acceptedSuggestions, acceptedKeywords)
-                      }
-                    ]
+                    'role': 'user',
+                    'content': AiPrompts.generatePolishPrompt(
+                      resumeText,
+                      acceptedSuggestions,
+                      acceptedKeywords,
+                      isMagicPolish: isMagicPolish,
+                    )
                   }
                 ],
-                'generationConfig': {
-                  'temperature': 0.2,
-                  'maxOutputTokens': 16384,
-                  'responseMimeType': 'application/json',
-                }
+                'temperature': 0.2,
+                'response_format': {'type': 'json_object'},
               }),
             )
             .timeout(const Duration(seconds: 90));
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
-          final String rawText =
-              data['candidates'][0]['content']['parts'][0]['text'];
+          final String rawText = data['choices'][0]['message']['content'];
           if (kDebugMode) print('✅ POLISH SUCCESS WITH $modelName!');
 
           try {
             return jsonDecode(rawText) as Map<String, dynamic>;
           } catch (_) {
-            if (kDebugMode)
+            if (kDebugMode) {
               print('⚠️ Polish JSON truncated, attempting repair...');
+            }
             final repaired = _repairTruncatedJson(rawText);
             return jsonDecode(repaired) as Map<String, dynamic>;
           }
         } else {
           if (kDebugMode) {
             print('❌ $modelName POLISH FAILED (${response.statusCode})');
+            print('Error details: ${response.body}');
           }
           continue;
         }

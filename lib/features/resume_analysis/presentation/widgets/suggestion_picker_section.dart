@@ -7,105 +7,233 @@ import '../bloc/editor_bloc.dart';
 import '../../domain/entities/resume_analysis.dart';
 
 class SuggestionPickerSection extends StatelessWidget {
-  const SuggestionPickerSection({super.key});
+  final VoidCallback onApplied;
+
+  const SuggestionPickerSection({super.key, required this.onApplied});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EditorBloc, EditorState>(
+    return BlocConsumer<EditorBloc, EditorState>(
+      listenWhen: (prev, curr) =>
+          prev.status != curr.status &&
+          curr.status == EditorStatus.loaded &&
+          curr.isModified,
+      listener: (_, __) {
+        // AI finished polishing → navigate to Preview.
+        onApplied();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Row(children: [
+            Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 18),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Resume enhanced! Review in Preview tab.',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ]),
+          backgroundColor: AppColors.primary.withOpacity(0.9),
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 3),
+        ));
+      },
       builder: (context, state) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //Summary pill
-              _AcceptanceSummary(state: state),
-              const SizedBox(height: 20),
+        final isPolishing = state.status == EditorStatus.polishing;
 
-              //Suggestions section
-              if (state.suggestions.isNotEmpty) ...[
-                _SectionHeader(
-                  title: 'AI Suggestions',
-                  icon: Icons.tips_and_updates_rounded,
-                  count: state.acceptedSuggestionsCount,
-                  total: state.suggestions.length,
-                  onAcceptAll: () =>
-                      context.read<EditorBloc>().add(const BulkUpdateSelection(isAccepted: true, type: SelectionType.suggestions)),
-                  onRejectAll: () =>
-                      context.read<EditorBloc>().add(const BulkUpdateSelection(isAccepted: false, type: SelectionType.suggestions)),
-                ),
-                const SizedBox(height: 10),
-                ...state.suggestions.asMap().entries.map(
-                      (entry) => _SuggestionTile(
-                        index: entry.key,
-                        selectable: entry.value,
-                      )
-                          .animate()
-                          .fadeIn(delay: (80 * entry.key).ms)
-                          .slideX(begin: 0.05),
-                    ),
-                const SizedBox(height: 28),
-              ],
+        return Column(
+          children: [
+            //list of suggestions
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Summary pill showing how many items are selected
+                    _AcceptanceSummary(state: state),
+                    const SizedBox(height: 20),
 
-              //Missing keywords section
-              if (state.missingKeywords.isNotEmpty) ...[
-                _SectionHeader(
-                  title: 'Missing Keywords',
-                  icon: Icons.key_rounded,
-                  count: state.acceptedKeywordsCount,
-                  total: state.missingKeywords.length,
-                  onAcceptAll: () =>
-                      context.read<EditorBloc>().add(const BulkUpdateSelection(isAccepted: true, type: SelectionType.keywords)),
-                  onRejectAll: () =>
-                      context.read<EditorBloc>().add(const BulkUpdateSelection(isAccepted: false, type: SelectionType.keywords)),
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: state.missingKeywords
-                      .asMap()
-                      .entries
-                      .map(
-                        (entry) => _KeywordChip(
-                          index: entry.key,
-                          selectable: entry.value,
+                    // AI Suggestions list
+                    if (state.suggestions.isNotEmpty) ...[
+                      _SectionHeader(
+                        title: 'AI Suggestions',
+                        icon: Icons.tips_and_updates_rounded,
+                        count: state.acceptedSuggestionsCount,
+                        total: state.suggestions.length,
+                        onAcceptAll: () => context.read<EditorBloc>().add(
+                            const BulkUpdateSelection(
+                                isAccepted: true,
+                                type: SelectionType.suggestions)),
+                        onRejectAll: () => context.read<EditorBloc>().add(
+                            const BulkUpdateSelection(
+                                isAccepted: false,
+                                type: SelectionType.suggestions)),
+                      ),
+                      const SizedBox(height: 10),
+                      ...state.suggestions.asMap().entries.map(
+                            (entry) => _SuggestionTile(
+                              index: entry.key,
+                              selectable: entry.value,
+                            )
+                                .animate()
+                                .fadeIn(delay: (80 * entry.key).ms)
+                                .slideX(begin: 0.05),
+                          ),
+                      const SizedBox(height: 28),
+                    ],
+
+                    // Missing Keywords chips
+                    if (state.missingKeywords.isNotEmpty) ...[
+                      _SectionHeader(
+                        title: 'Missing Keywords',
+                        icon: Icons.key_rounded,
+                        count: state.acceptedKeywordsCount,
+                        total: state.missingKeywords.length,
+                        onAcceptAll: () => context.read<EditorBloc>().add(
+                            const BulkUpdateSelection(
+                                isAccepted: true,
+                                type: SelectionType.keywords)),
+                        onRejectAll: () => context.read<EditorBloc>().add(
+                            const BulkUpdateSelection(
+                                isAccepted: false,
+                                type: SelectionType.keywords)),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: state.missingKeywords
+                            .asMap()
+                            .entries
+                            .map((entry) => _KeywordChip(
+                                  index: entry.key,
+                                  selectable: entry.value,
+                                ))
+                            .toList(),
+                      ),
+                    ],
+
+                    // Empty state
+                    if (state.suggestions.isEmpty &&
+                        state.missingKeywords.isEmpty)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 80),
+                          child: Column(
+                            children: [
+                              Icon(Icons.check_circle_outline_rounded,
+                                  size: 56,
+                                  color: AppColors.success.withOpacity(0.5)),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No suggestions available',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(color: AppColors.textMuted),
+                              ),
+                            ],
+                          ),
                         ),
-                      )
-                      .toList(),
+                      ),
+                  ],
                 ),
-              ],
+              ),
+            ),
 
-              if (state.suggestions.isEmpty && state.missingKeywords.isEmpty)
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 80),
-                    child: Column(
-                      children: [
-                        Icon(Icons.check_circle_outline_rounded,
-                            size: 56,
-                            color: AppColors.success.withOpacity(0.5)),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No suggestions available',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: AppColors.textMuted,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
+            //"Apply Suggestions" button
+            _ApplySuggestionsBar(
+              isPolishing: isPolishing,
+              hasSelections: state.hasSelections,
+            ),
+          ],
         );
       },
     );
   }
 }
 
-// Summary Bar ──
+class _ApplySuggestionsBar extends StatelessWidget {
+  final bool isPolishing;
+  final bool hasSelections;
+
+  const _ApplySuggestionsBar({
+    required this.isPolishing,
+    required this.hasSelections,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+          16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
+      decoration: BoxDecoration(
+        color: AppColors.surface.withOpacity(0.97),
+        border:
+            Border(top: BorderSide(color: AppColors.border.withOpacity(0.5))),
+      ),
+      child: GestureDetector(
+        onTap: (isPolishing || !hasSelections)
+            ? null
+            : () => context.read<EditorBloc>().add(PolishWithAI()),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          height: 52,
+          decoration: BoxDecoration(
+            gradient: hasSelections
+                ? const LinearGradient(
+                    colors: [AppColors.primary, AppColors.primaryDark])
+                : null,
+            color: hasSelections ? null : AppColors.surfaceElevated,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: hasSelections
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.3),
+                      blurRadius: 14,
+                      offset: const Offset(0, 4),
+                    )
+                  ]
+                : null,
+          ),
+          child: Center(
+            child: isPolishing
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2.5, color: Colors.white))
+                : Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 18,
+                      color: hasSelections ? Colors.white : AppColors.textMuted,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      hasSelections
+                          ? 'Apply Suggestions'
+                          : 'Select at least one item',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: hasSelections
+                                ? Colors.white
+                                : AppColors.textMuted,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                    ),
+                  ]),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Summary pill
 
 class _AcceptanceSummary extends StatelessWidget {
   final EditorState state;
@@ -125,12 +253,10 @@ class _AcceptanceSummary extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primary.withOpacity(0.2),
-                  AppColors.accent.withOpacity(0.1),
-                ],
-              ),
+              gradient: LinearGradient(colors: [
+                AppColors.primary.withOpacity(0.2),
+                AppColors.accent.withOpacity(0.1),
+              ]),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -157,7 +283,7 @@ class _AcceptanceSummary extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Toggle items below, then tap "Polish with AI"',
+                  'Toggle items below, then tap "Apply Suggestions"',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppColors.textMuted,
                         fontSize: 11,
@@ -172,7 +298,7 @@ class _AcceptanceSummary extends StatelessWidget {
   }
 }
 
-// Section Header ──
+// Section header with "Select All / Clear All"
 
 class _SectionHeader extends StatelessWidget {
   final String title;
@@ -269,19 +395,16 @@ class _MiniButton extends StatelessWidget {
   }
 }
 
-// Suggestion Tile ─
+// Suggestion tile
 
 class _SuggestionTile extends StatelessWidget {
   final int index;
   final SelectableSuggestion selectable;
 
-  const _SuggestionTile({
-    required this.index,
-    required this.selectable,
-  });
+  const _SuggestionTile({required this.index, required this.selectable});
 
-  Color _priorityColor(SuggestionPriority priority) {
-    switch (priority) {
+  Color _priorityColor(SuggestionPriority p) {
+    switch (p) {
       case SuggestionPriority.high:
         return AppColors.error;
       case SuggestionPriority.medium:
@@ -291,8 +414,8 @@ class _SuggestionTile extends StatelessWidget {
     }
   }
 
-  String _priorityLabel(SuggestionPriority priority) {
-    switch (priority) {
+  String _priorityLabel(SuggestionPriority p) {
+    switch (p) {
       case SuggestionPriority.high:
         return 'HIGH';
       case SuggestionPriority.medium:
@@ -350,47 +473,43 @@ class _SuggestionTile extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: color.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(
-                                    color: color.withOpacity(0.2)),
-                              ),
-                              child: Text(
-                                _priorityLabel(selectable.suggestion.priority),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                      color: color,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 8,
-                                      letterSpacing: 0.5,
-                                    ),
-                              ),
+                        Row(children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: color.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: color.withOpacity(0.2)),
                             ),
-                            const Spacer(),
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child: Icon(
-                                isAccepted
-                                    ? Icons.check_circle_rounded
-                                    : Icons.circle_outlined,
-                                key: ValueKey(isAccepted),
-                                size: 22,
-                                color: isAccepted
-                                    ? AppColors.primary
-                                    : AppColors.textMuted
-                                        .withOpacity(0.5),
-                              ),
+                            child: Text(
+                              _priorityLabel(selectable.suggestion.priority),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                    color: color,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 8,
+                                    letterSpacing: 0.5,
+                                  ),
                             ),
-                          ],
-                        ),
+                          ),
+                          const Spacer(),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
+                            child: Icon(
+                              isAccepted
+                                  ? Icons.check_circle_rounded
+                                  : Icons.circle_outlined,
+                              key: ValueKey(isAccepted),
+                              size: 22,
+                              color: isAccepted
+                                  ? AppColors.primary
+                                  : AppColors.textMuted.withOpacity(0.5),
+                            ),
+                          ),
+                        ]),
                         const SizedBox(height: 10),
                         Text(
                           selectable.suggestion.title,
@@ -422,16 +541,13 @@ class _SuggestionTile extends StatelessWidget {
   }
 }
 
-// Keyword Chip ─
+// Keyword chip
 
 class _KeywordChip extends StatelessWidget {
   final int index;
   final SelectableKeyword selectable;
 
-  const _KeywordChip({
-    required this.index,
-    required this.selectable,
-  });
+  const _KeywordChip({required this.index, required this.selectable});
 
   @override
   Widget build(BuildContext context) {

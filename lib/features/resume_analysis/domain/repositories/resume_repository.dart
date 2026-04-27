@@ -10,5 +10,6 @@ abstract class ResumeRepository {
     String resumeText, {
     required List<String> acceptedSuggestions,
     required List<String> acceptedKeywords,
+    bool isMagicPolish = false,
   });
 }

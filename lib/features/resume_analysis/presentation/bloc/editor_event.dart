@@ -8,7 +8,7 @@ abstract class EditorEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-//Initializes the editor with resume text and analysis results.
+//Initializes the editor with resume text and analysis results
 class InitializeEditor extends EditorEvent {
   final String resumeText;
   final String fileName;
@@ -24,7 +24,7 @@ class InitializeEditor extends EditorEvent {
   List<Object?> get props => [resumeText, fileName, analysis];
 }
 
-//Toggles a specific suggestion's accepted state.
+//Toggles a specific suggestion's accepted state
 class ToggleSuggestion extends EditorEvent {
   final int index;
   const ToggleSuggestion(this.index);
@@ -32,7 +32,7 @@ class ToggleSuggestion extends EditorEvent {
   List<Object?> get props => [index];
 }
 
-//Toggles a specific keyword's accepted state.
+//Toggles a specific keyword's accepted state
 class ToggleKeyword extends EditorEvent {
   final int index;
   const ToggleKeyword(this.index);
@@ -69,6 +69,8 @@ class UpdateResumeText extends EditorEvent {
 
 //Trigger AI polish using accepted suggestions & keywords.
 class PolishWithAI extends EditorEvent {}
+
+class ParseResumeForEditing extends EditorEvent {}
 
 //Rename the resume file.
 class RenameResume extends EditorEvent {

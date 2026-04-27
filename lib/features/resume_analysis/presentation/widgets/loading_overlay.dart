@@ -16,7 +16,9 @@ class LoadingOverlay extends StatelessWidget {
             color: AppColors.cardBg,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: AppColors.border),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 40)],
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 40)
+            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -25,16 +27,21 @@ class LoadingOverlay extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryDark]),
+                  gradient: const LinearGradient(
+                      colors: [AppColors.primary, AppColors.primaryDark]),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 30),
-              ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1500.ms, color: AppColors.primaryDark.withOpacity(0.5)),
+                child: const Icon(Icons.auto_awesome_rounded,
+                    color: Colors.white, size: 30),
+              ).animate(onPlay: (c) => c.repeat()).shimmer(
+                  duration: 1500.ms,
+                  color: AppColors.primaryDark.withOpacity(0.5)),
               const SizedBox(height: 24),
-              Text('Analyzing Resume', style: Theme.of(context).textTheme.headlineMedium),
+              Text('Analyzing Resume',
+                  style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 8),
               Text(
-                'Gemini AI is reviewing your resume...',
+                'AI is reviewing your resume...',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -50,7 +57,10 @@ class LoadingOverlay extends StatelessWidget {
               ),
             ],
           ),
-        ).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.9, 0.9)),
+        )
+            .animate()
+            .fadeIn(duration: 300.ms)
+            .scale(begin: const Offset(0.9, 0.9)),
       ),
     );
   }
